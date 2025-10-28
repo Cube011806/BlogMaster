@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+        <h1>Statystyki</h1>
+        {% if user_blogs is not None %}
+        <p>Masz {{ user_blogs }} blog(ów).</p>
+        {% else %}
+        <p>Zaloguj się, aby zobaczyć statystyki.</p>
+        {% endif %}
+{% endblock %}

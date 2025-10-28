@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ post.title }}</h1>
+    <p class="text-muted">Autor: {{ post.author }} — {{ post.created_at }}</p>
+    <div class="mb-4">{{ post.content|linebreaks }}</div>
+    <a href="/blogs/" class="btn btn-secondary">Powrót</a>
+    <hr>
+    <h4>Komentarze</h4>
+    {% for comment in post.comments.all %}
+    <div class="mb-2">
+        <strong>{{ comment.author }}</strong> ({{ comment.created_at }})<br>
+        {{ comment.text|linebreaks }}
+    </div>
+    {% empty %}
+    <p>Brak komentarzy.</p>
+    {% endfor %}
+
+    <!-- formularz komentarza -->
+    {% if user.is_authenticated %}
+    {% include 'comments/comment_form.html' with post=post %}
+    {% else %}
+        <p><a href="/accounts/login/">Zaloguj się</a>, aby dodać komentarz.</p>
+    {% endif %}
+{% endblock %}
