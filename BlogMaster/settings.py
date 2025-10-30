@@ -75,6 +75,10 @@ WSGI_APPLICATION = 'BlogMaster.wsgi.application'
 
 LOGOUT_REDIRECT_URL = '/'
 
+LOGIN_REDIRECT_URL = '/'
+
+LOGIN_URL = '/accounts/login/'
+
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
