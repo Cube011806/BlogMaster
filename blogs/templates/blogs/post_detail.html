@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
+<style>
+body {
+    background-color: #f3f4f6;
+    font-family: 'Segoe UI', sans-serif;
+  }
+</style>
 <h1>{{ post.title }}</h1>
     <p class="text-muted">Autor: {{ post.author }} — {{ post.created_at }}</p>
     <div class="mb-4">{{ post.content|linebreaks }}</div>

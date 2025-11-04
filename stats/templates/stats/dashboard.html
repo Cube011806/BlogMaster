@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-        <h1>Statystyki</h1>
+<style>
+body {
+    background-color: #f3f4f6;
+    font-family: 'Segoe UI', sans-serif;
+  }
+</style>
+<h1>Statystyki</h1>
         {% if user_blogs is not None %}
         <p>Masz {{ user_blogs }} blog(ów).</p>
         {% else %}

@@ -21,7 +21,7 @@ def post_create(request):
             post.author = request.user
             blog = Blog.objects.filter(owner=request.user).first()
             if not blog:
-                blog = Blog.objects.create(owner=request.user, title=f"Blog {request.user.username}")
+                blog = Blog.objects.create(owner=request.user, title=f"Blog {request.user.email}")
             post.blog = blog
             post.save()
             return redirect('post_detail', pk=post.pk)

@@ -1,5 +1,10 @@
-{% extends 'base.html' %}
 {% block content %}
+<style>
+body {
+    background-color: #f3f4f6;
+    font-family: 'Segoe UI', sans-serif;
+  }
+</style>
 <form method="post" action="{% url 'add_comment' post.pk %}">{% csrf_token %}
     {{ form.as_p }}
     <button class="btn btn-sm btn-primary" type="submit">Dodaj komentarz</button>
