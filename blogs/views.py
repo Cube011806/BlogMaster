@@ -1,9 +1,31 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post, Blog
-from .forms import PostForm
+from .forms import PostForm, BlogForm
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+def blog_list(request):
+    blogs = Blog.objects.order_by('-created_at')
+    return render(request, 'blogs/blog_list.html', {'blogs': blogs})
+
+@login_required
+def user_blogs(request):
+    blogs = request.user.blogs.all()  # używamy related_name='blogs' z modelu Blog
+    return render(request, 'blogs/user_blogs.html', {'blogs': blogs})
+
+@login_required
+def blog_create(request):
+    if request.method == 'POST':
+        form = BlogForm(request.POST)
+        if form.is_valid():
+            blog = form.save(commit=False)
+            blog.owner = request.user
+            blog.save()
+            return redirect('user_blogs')
+    else:
+        form = BlogForm()
+    return render(request, 'blogs/blog_create.html', {'form': form})
+
 def post_list(request):
     posts = Post.objects.order_by('-created_at')
     return render(request, 'blogs/post_list.html', {'posts': posts})

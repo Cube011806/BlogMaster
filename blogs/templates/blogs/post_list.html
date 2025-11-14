@@ -8,7 +8,6 @@ body {
 </style>
 <div class="container mt-5">
     <h1>Ostatnie posty</h1>
-    <a class="btn btn-success mb-3" href="/blogs/create/">Dodaj post</a>
     <div class="list-group">
         {% for post in posts %}
             <a href="{% url 'post_detail' post.pk %}" class="list-group-item list-group-item-action">

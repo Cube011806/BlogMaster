@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista blogów{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Blogi użytkowników</h1>
+
+    {% if blogs %}
+        <div class="list-group">
+            {% for blog in blogs %}
+                <a href="{% url 'blog_detail' blog.id %}" class="list-group-item list-group-item-action">
+                    <h5 class="mb-1">{{ blog.title }}</h5>
+                    <small>
+                        Właściciel: {{ blog.owner.email }} |
+                        Utworzono: {{ blog.created_at }}
+                    </small>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Brak blogów do wyświetlenia.</p>
+    {% endif %}
+</div>
+{% endblock %}

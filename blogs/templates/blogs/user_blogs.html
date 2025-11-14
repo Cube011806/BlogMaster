@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Twoje blogi{% endblock %}
+
+{% block content %}
+<style>
+    /* Wyśrodkowanie wszystkich kart i przycisku */
+    .blogs-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 40px;
+    }
+
+    h3 {
+        font-weight: 600;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    /* Karty blogów */
+    .card {
+        width: 100%;
+        max-width: 500px;
+        margin-bottom: 20px;
+        border-radius: 12px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .card-title {
+        font-size: 20px;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+
+    .card-text {
+        font-size: 14px;
+        color: #6c757d;
+    }
+
+    /* Styl przycisku */
+    .btn-add-blog {
+        padding: 10px 25px;
+        font-size: 16px;
+        border-radius: 8px;
+        font-weight: 500;
+        margin-bottom: 30px;
+        transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .btn-add-blog:hover {
+        background-color: #28a745cc;
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="blogs-container">
+    <h3>Twoje blogi</h3>
+    <a class="btn btn-success btn-add-blog" href="{% url 'blog_create' %}">Dodaj blog</a>
+
+    {% if blogs %}
+        {% for blog in blogs %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">{{ blog.title }}</div>
+                    <div class="card-text">Stworzony: {{ blog.created_at }}</div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Nie masz jeszcze żadnych blogów.</p>
+    {% endif %}
+</div>
+{% endblock %}
