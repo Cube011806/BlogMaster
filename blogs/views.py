@@ -50,3 +50,23 @@ def post_create(request):
     else:
         form = PostForm()
     return render(request, 'blogs/post_form.html', {'form': form})
+
+@login_required
+def blog_edit(request, pk):
+    blog = get_object_or_404(Blog, pk=pk, owner=request.user)  # tylko właściciel może edytować
+    if request.method == 'POST':
+        form = BlogForm(request.POST, instance=blog)
+        if form.is_valid():
+            form.save()
+            return redirect('user_blogs')
+    else:
+        form = BlogForm(instance=blog)
+    return render(request, 'blogs/blog_create.html', {'form': form})  # możesz użyć tego samego szablonu
+
+@login_required
+def blog_delete(request, pk):
+    blog = get_object_or_404(Blog, pk=pk, owner=request.user)
+    if request.method == 'POST':
+        blog.delete()
+        return redirect('user_blogs')
+    return render(request, 'blogs/blog_confirm_delete.html', {'blog': blog})
