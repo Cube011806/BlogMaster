@@ -1,12 +1,20 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post, Blog
-from .forms import PostForm, BlogForm
+from .models import Blog
+from .forms import BlogForm
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def blog_list(request):
     blogs = Blog.objects.order_by('-created_at')
     return render(request, 'blogs/blog_list.html', {'blogs': blogs})
+
+def blog_detail(request, pk):
+    blog = get_object_or_404(Blog, pk=pk)
+    posts = blog.posts.order_by('-created_at')
+    return render(request, 'blogs/blog_detail.html', {
+        'blog': blog,
+        'posts': posts,
+    })
 
 @login_required
 def user_blogs(request):
@@ -25,31 +33,6 @@ def blog_create(request):
     else:
         form = BlogForm()
     return render(request, 'blogs/blog_create.html', {'form': form})
-
-def post_list(request):
-    posts = Post.objects.order_by('-created_at')
-    return render(request, 'blogs/post_list.html', {'posts': posts})
-
-def post_detail(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    return render(request, 'blogs/post_detail.html', {'post': post})
-
-@login_required
-def post_create(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            blog = Blog.objects.filter(owner=request.user).first()
-            if not blog:
-                blog = Blog.objects.create(owner=request.user, title=f"Blog {request.user.email}")
-            post.blog = blog
-            post.save()
-            return redirect('post_detail', pk=post.pk)
-    else:
-        form = PostForm()
-    return render(request, 'blogs/post_form.html', {'form': form})
 
 @login_required
 def blog_edit(request, pk):

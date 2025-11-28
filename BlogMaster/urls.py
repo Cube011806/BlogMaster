@@ -23,6 +23,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')), #połączenie z aplikacją accounts
     path("accounts/", include("django.contrib.auth.urls")),
     path('blogs/', include('blogs.urls')),
+    path('posts/', include('posts.urls')),
     path('comments/', include('comments.urls')),
     path('stats/', include('stats.urls')),
 ]

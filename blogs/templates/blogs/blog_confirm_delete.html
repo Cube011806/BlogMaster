@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
+<style>
+body {
+    background-color: #f3f4f6;
+    font-family: 'Segoe UI', sans-serif;
+  }
+</style>
 <div class="container mt-4">
   <h2>Czy na pewno chcesz usunąć blog "{{ blog.title }}"?</h2>
   <form method="post">

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Szczegóły bloga{% endblock %}
+
+{% block content %}
+<style>
+body {
+    background-color: #f3f4f6;
+    font-family: 'Segoe UI', sans-serif;
+  }
+</style>
+<div class="container mt-4">
+    <h1>Blog: {{ blog.title }}</h1>
+    <p class="text-muted">Właściciel: {{ blog.owner.email }} — {{ blog.created_at }}</p>
+    <hr>
+    <p>{{ blog.description }}</p>
+    <hr>
+
+    {% if request.user == blog.owner %}
+        <a href="{% url 'post_create' blog.pk %}" class="btn btn-success mb-3">Dodaj post</a>
+    {% endif %}
+
+    <h3>Posty:</h3>
+    <div class="list-group">
+        {% for post in posts %}
+            <a href="{% url 'post_detail' post.pk %}" class="list-group-item list-group-item-action">
+                <h5 class="mb-1">{{ post.title }}</h5>
+                <small>Autor: {{ post.author }} — {{ post.created_at }}</small>
+            </a>
+        {% empty %}
+            <p>Brak postów w tym blogu.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -4,6 +4,10 @@
 
 {% block content %}
 <style>
+    body {
+    background-color: #f3f4f6;
+    font-family: 'Segoe UI', sans-serif;
+  }
     /* Wyśrodkowanie wszystkich kart i przycisku */
     .blogs-container {
         display: flex;
@@ -63,17 +67,19 @@
         background-color: #28a745cc;
         transform: translateY(-2px);
     }
+
 </style>
 
 <div class="blogs-container">
-    <h3>Twoje blogi</h3>
     <a class="btn btn-success btn-add-blog" href="{% url 'blog_create' %}">Dodaj blog</a>
+    <h3>Twoje blogi</h3>
 
     {% if blogs %}
         {% for blog in blogs %}
             <div class="card-body">
                 <div class="card-title">{{ blog.title }}</div>
                 <div class="card-text">Stworzony: {{ blog.created_at }}</div>
+                <a href="{% url 'blog_detail' blog.pk %}" class="btn btn-info btn-sm">Szczegóły</a>
                 <a href="{% url 'blog_edit' blog.pk %}" class="btn btn-primary btn-sm">Edytuj</a>
                 <a href="{% url 'blog_delete' blog.pk %}" class="btn btn-danger btn-sm">Usuń</a>
             </div>

@@ -17,9 +17,9 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item"><a class="nav-link" href="/blogs/">Blogi</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/stats/">Statystyki</a></li>
                         {% if user.is_authenticated %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'user_blogs' %}">Zarządzaj swoimi blogami</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/stats/">Twoje statystyki</a></li>
                         {% endif %}
                     </ul>
 

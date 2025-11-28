@@ -7,9 +7,5 @@ body {
   }
 </style>
 <h1>Statystyki</h1>
-        {% if user_blogs is not None %}
-        <p>Masz {{ user_blogs }} blog(ów).</p>
-        {% else %}
-        <p>Zaloguj się, aby zobaczyć statystyki.</p>
-        {% endif %}
+<p>Masz {{ blogs_count }} blog(ów) oraz w sumie {{ posts_count }} post(ów).</p>
 {% endblock %}

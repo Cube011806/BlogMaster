@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, get_object_or_404
 from .forms import CommentForm
-from blogs.models import Post
+from .models import Post
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
