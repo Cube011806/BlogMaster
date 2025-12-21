@@ -5,8 +5,10 @@ body {
     font-family: 'Segoe UI', sans-serif;
   }
 </style>
-<form method="post" action="{% url 'add_comment' post.pk %}">{% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-sm btn-primary" type="submit">Dodaj komentarz</button>
+<form method="post" action="{% url 'add_comment' post.pk %}">
+    {% csrf_token %}
+    {{ comment_form.text }}
+    <button class="btn btn-primary mt-2">Dodaj komentarz</button>
 </form>
+
 {% endblock %}

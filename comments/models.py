@@ -10,5 +10,17 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="replies"
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+
     def __str__(self):
         return f"Komentarz {self.id} do {self.post.title}"

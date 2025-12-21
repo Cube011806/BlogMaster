@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Post
 from .forms import PostForm
 from blogs.models import Blog
+from comments.forms import CommentForm
 
 def post_list(request):
     posts = Post.objects.order_by('-created_at')
@@ -10,7 +11,15 @@ def post_list(request):
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    return render(request, 'posts/post_detail.html', {'post': post})
+    top_level_comments = post.comments.filter(parent__isnull=True)
+
+    return render(request, 'posts/post_detail.html', {
+        'post': post,
+        'comment_form': CommentForm(),
+        'top_level_comments': top_level_comments
+    })
+
+
 
 @login_required
 def post_create(request, blog_pk):
