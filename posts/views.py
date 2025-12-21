@@ -19,8 +19,6 @@ def post_detail(request, pk):
         'top_level_comments': top_level_comments
     })
 
-
-
 @login_required
 def post_create(request, blog_pk):
     blog = get_object_or_404(Blog, pk=blog_pk, owner=request.user)
@@ -35,3 +33,19 @@ def post_create(request, blog_pk):
     else:
         form = PostForm()
     return render(request, 'posts/post_create.html', {'form': form, 'blog': blog})
+
+@login_required
+def post_like(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+        liked = False
+    else:
+        post.likes.add(request.user)
+        liked = True
+
+    return JsonResponse({
+        "liked": liked,
+        "count": post.likes.count()
+    })

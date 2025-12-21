@@ -14,7 +14,13 @@ body {
 
 <div class="mb-4">{{ post.content|linebreaks }}</div>
 
-<a href="{% url 'blog_detail' post.blog.pk %}" class="btn btn-secondary">Powrót</a>
+<button class="btn btn-sm like-post-btn 
+        {% if user in post.likes.all %}btn-primary{% else %}btn-outline-primary{% endif %}"
+        data-id="{{ post.id }}">
+    👍 <span class="post-like-count">{{ post.likes.count }}</span>
+</button>
+
+<a href="{% url 'blog_detail' post.blog.pk %}" class="btn btn-secondary ms-2">Powrót</a>
 
 <hr>
 
@@ -79,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 form.reset();
-                attachReplyForms(); 
+                attachReplyForms();
             });
         });
     }
@@ -96,8 +102,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.querySelectorAll(".comment-form").forEach(form => handleFormSubmit(form));
     attachReplyForms();
+
+    document.addEventListener("click", e => {
+        const btn = e.target.closest(".like-post-btn");
+        if (!btn) return;
+
+        const id = btn.dataset.id;
+
+        fetch(`/posts/${id}/like/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrftoken,
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.querySelector(".post-like-count").textContent = data.count;
+            btn.classList.toggle("btn-primary", data.liked);
+            btn.classList.toggle("btn-outline-primary", !data.liked);
+        });
+    });
+
+    document.addEventListener("click", e => {
+        const btn = e.target.closest(".like-comment-btn");
+        if (!btn) return;
+
+        const id = btn.dataset.id;
+
+        fetch(`/comments/${id}/like/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrftoken,
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.querySelector(".comment-like-count").textContent = data.count;
+            btn.classList.toggle("btn-danger", data.liked);
+            btn.classList.toggle("btn-outline-secondary", !data.liked);
+        });
+    });
+
 });
 </script>
 
 {% endblock %}
-

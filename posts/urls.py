@@ -1,8 +1,12 @@
 from django.urls import path
-from . import views
+from .views import post_list
+from .views import post_detail
+from .views import post_create
+from .views import post_like
 
 urlpatterns = [
-    path('', views.post_list, name='post_list'),
-    path('<int:pk>/', views.post_detail, name='post_detail'),
-    path('create/<int:blog_pk>/', views.post_create, name='post_create'),
+    path('', post_list, name='post_list'),
+    path('<int:pk>/', post_detail, name='post_detail'),
+    path('create/<int:blog_pk>/', post_create, name='post_create'),
+    path('<int:pk>/like/', post_like, name='post_like'),
 ]

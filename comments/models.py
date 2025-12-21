@@ -10,6 +10,8 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    likes = models.ManyToManyField(User, related_name="liked_comments", blank=True)
+    
 
     parent = models.ForeignKey(
         "self",

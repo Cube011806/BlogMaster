@@ -2,6 +2,12 @@
     <strong>{{ comment.author }}</strong> — {{ comment.created_at }}<br>
     <p>{{ comment.text|linebreaks }}</p>
 
+    <button class="btn btn-sm like-comment-btn 
+            {% if user in comment.likes.all %}btn-danger{% else %}btn-outline-secondary{% endif %}"
+            data-id="{{ comment.id }}">
+        👍 <span class="comment-like-count">{{ comment.likes.count }}</span>
+    </button>
+
     {% if user.is_authenticated %}
     <form method="POST" action="{% url 'add_comment' post.pk %}" class="reply-form mt-2">
         {% csrf_token %}

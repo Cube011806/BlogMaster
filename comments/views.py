@@ -33,3 +33,19 @@ def add_comment(request, post_pk):
                 return JsonResponse({"html": html})
 
     return redirect('post_detail', pk=post.pk)
+
+@login_required
+def like_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+
+    if request.user in comment.likes.all():
+        comment.likes.remove(request.user)
+        liked = False
+    else:
+        comment.likes.add(request.user)
+        liked = True
+
+    return JsonResponse({
+        "liked": liked,
+        "count": comment.likes.count()
+    })
