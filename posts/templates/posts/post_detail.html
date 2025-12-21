@@ -28,10 +28,76 @@ body {
 
 <hr>
 
-{% for comment in top_level_comments %}
-    {% include "comments/comment.html" with comment=comment post=post %}
-{% empty %}
-    <p>Brak komentarzy.</p>
-{% endfor %}
+<div id="comments-container">
+    {% for comment in top_level_comments %}
+        {% include "comments/comment.html" with comment=comment post=post %}
+    {% empty %}
+        <p>Brak komentarzy.</p>
+    {% endfor %}
+</div>
+
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const csrftoken = getCookie('csrftoken');
+
+    function handleFormSubmit(form, parentId = null) {
+        form.addEventListener("submit", e => {
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken,
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (parentId) {
+                    const container = document.querySelector(`#comment-${parentId} .ms-4`);
+                    container.insertAdjacentHTML("beforeend", data.html);
+                } else {
+                    const list = document.querySelector("#comments-container");
+                    list.insertAdjacentHTML("afterbegin", data.html);
+                }
+
+                form.reset();
+                attachReplyForms(); 
+            });
+        });
+    }
+
+    function attachReplyForms() {
+        document.querySelectorAll(".reply-form").forEach(form => {
+            if (!form.dataset.bound) {
+                const parentId = form.querySelector("[name='parent_id']").value;
+                handleFormSubmit(form, parentId);
+                form.dataset.bound = "true";
+            }
+        });
+    }
+
+    document.querySelectorAll(".comment-form").forEach(form => handleFormSubmit(form));
+    attachReplyForms();
+});
+</script>
 
 {% endblock %}
+
