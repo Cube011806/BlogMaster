@@ -4,6 +4,8 @@ from .models import Post
 from .forms import PostForm
 from blogs.models import Blog
 from comments.forms import CommentForm
+from django.http import JsonResponse
+
 
 def post_list(request):
     posts = Post.objects.order_by('-created_at')
