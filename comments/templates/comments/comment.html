@@ -13,7 +13,7 @@
 
     {% if comment.replies.all %}
         <div class="ms-4 mt-2">
-            {% for reply in comment.replies.all %}
+            {% for reply in comment.replies.all|dictsort:"created_at" %}
                 {% include "comments/comment.html" with comment=reply %}
             {% endfor %}
         </div>
