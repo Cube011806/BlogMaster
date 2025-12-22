@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Usuń post{% endblock %}
+
+{% block content %}
+<style>
+body {
+    background-color: #f3f4f6;
+    font-family: 'Segoe UI', sans-serif;
+}
+</style>
+
+<div class="container mt-5">
+    <h2>Czy na pewno chcesz usunąć post "{{ post.title }}"?</h2>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Usuń</button>
+        <a href="{% url 'blog_detail' post.blog.pk %}" class="btn btn-secondary">Anuluj</a>
+    </form>
+</div>
+{% endblock %}

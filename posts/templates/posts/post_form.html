@@ -83,11 +83,25 @@
 </style>
 
 <div class="form-container">
-  <h1>Dodaj post</h1>
+  <h1>
+    {% if is_edit %}
+      Edytuj post
+    {% else %}
+      Dodaj post
+    {% endif %}
+  </h1>
+
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn-submit">Zapisz</button>
+
+    <button type="submit" class="btn-submit">
+      {% if is_edit %}
+        Zapisz zmiany
+      {% else %}
+        Dodaj post
+      {% endif %}
+    </button>
   </form>
 </div>
 {% endblock %}

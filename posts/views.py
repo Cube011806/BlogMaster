@@ -33,18 +33,53 @@ def post_detail(request, pk):
 
 @login_required
 def post_create(request, blog_pk):
-    blog = get_object_or_404(Blog, pk=blog_pk, owner=request.user)
+    blog = get_object_or_404(Blog, pk=blog_pk)
+
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
-            post.author = request.user
             post.blog = blog
+            post.author = request.user
             post.save()
             return redirect('blog_detail', pk=blog.pk)
     else:
         form = PostForm()
-    return render(request, 'posts/post_create.html', {'form': form, 'blog': blog})
+
+    return render(request, 'posts/post_form.html', {
+        'form': form,
+        'blog': blog,
+        'is_edit': False,
+    })
+
+@login_required
+def post_edit(request, pk):
+    post = get_object_or_404(Post, pk=pk, author=request.user)
+
+    if request.method == 'POST':
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('blog_detail', pk=post.blog.pk)
+    else:
+        form = PostForm(instance=post)
+
+    return render(request, 'posts/post_form.html', {
+        'form': form,
+        'blog': post.blog,
+        'is_edit': True,
+    })
+
+
+@login_required
+def post_delete(request, pk):
+    post = get_object_or_404(Post, pk=pk, author=request.user)
+    if request.method == 'POST':
+        post.delete()
+        return redirect('blog_detail', pk=post.blog.pk)
+    return render(request, 'posts/post_confirm_delete.html', {'post': post})
+
+
 
 @login_required
 def post_like(request, pk):

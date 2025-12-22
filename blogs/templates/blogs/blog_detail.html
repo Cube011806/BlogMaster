@@ -7,8 +7,14 @@
 body {
     background-color: #f3f4f6;
     font-family: 'Segoe UI', sans-serif;
-  }
+}
+
+.post-actions {
+    text-align: right;
+    margin-top: 5px;
+}
 </style>
+
 <div class="container mt-4">
     <h1>Blog: {{ blog.title }}</h1>
     <p class="text-muted">Właściciel: {{ blog.owner.email }} — {{ blog.created_at }}</p>
@@ -21,12 +27,24 @@ body {
     {% endif %}
 
     <h3>Posty:</h3>
+
     <div class="list-group">
         {% for post in posts %}
-            <a href="{% url 'post_detail' post.pk %}" class="list-group-item list-group-item-action">
-                <h5 class="mb-1">{{ post.title }}</h5>
-                <small>Autor: {{ post.author }} — {{ post.created_at }}</small>
-            </a>
+            <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none text-dark">
+                        <h5 class="mb-1">{{ post.title }}</h5>
+                        <small>Autor: {{ post.author }} — {{ post.created_at }}</small>
+                    </a>
+                </div>
+
+                {% if request.user == blog.owner %}
+                <div class="mt-2 mt-md-0">
+                    <a href="{% url 'post_edit' post.pk %}" class="btn btn-sm btn-warning me-2">Edytuj</a>
+                    <a href="{% url 'post_delete' post.pk %}" class="btn btn-sm btn-danger">Usuń</a>
+                </div>
+                {% endif %}
+            </div>
         {% empty %}
             <p>Brak postów w tym blogu.</p>
         {% endfor %}
