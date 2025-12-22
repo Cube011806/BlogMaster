@@ -30,11 +30,16 @@ body {
     <div class="text-center">
         <span class="me-2">Podobał Ci się ten post?</span>
 
+        {% if user.is_authenticated %}
         <button class="btn btn-sm like-post-btn 
-                {% if user in post.likes.all %}btn-primary{% else %}btn-outline-primary{% endif %}"
-                data-id="{{ post.id }}">
-            👍 <span class="post-like-count">{{ post.likes.count }}</span>
+            {% if user in post.likes.all %}btn-primary{% else %}btn-outline-primary{% endif %}"
+            data-id="{{ post.id }}">
+            <span style="pointer-events:none;">👍 <span class="post-like-count">{{ post.likes.count }}</span></span>
         </button>
+
+        {% else %}
+            <p>Zaloguj się, aby polubić ten post!</p>
+        {% endif %}
     </div>
 
     <!-- Prawa strona: następny post -->
@@ -106,15 +111,12 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(data => {
 
                 if (parentId) {
-                    // Dodawanie odpowiedzi
                     const container = document.querySelector(`#comment-${parentId} .ms-4`);
                     container.insertAdjacentHTML("beforeend", data.html);
 
                 } else {
-                    // Dodawanie komentarza top-level
                     const list = document.querySelector("#comments-container");
 
-                    // USUWANIE "Brak komentarzy."
                     const emptyMsg = list.querySelector("p");
                     if (emptyMsg && emptyMsg.textContent.includes("Brak komentarzy")) {
                         emptyMsg.remove();
@@ -139,13 +141,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Obsługa formularzy komentarzy głównych
     document.querySelectorAll(".comment-form").forEach(form => handleFormSubmit(form));
-
-    // Obsługa formularzy odpowiedzi
     attachReplyForms();
 
-    // Like dla postów
     document.addEventListener("click", e => {
         const btn = e.target.closest(".like-post-btn");
         if (!btn) return;
@@ -161,13 +159,17 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(res => res.json())
         .then(data => {
-            btn.querySelector(".post-like-count").textContent = data.count;
+
+            const countSpan = btn.querySelector(".post-like-count");
+            if (countSpan) {
+                countSpan.textContent = data.likes_count; 
+            }
+
             btn.classList.toggle("btn-primary", data.liked);
             btn.classList.toggle("btn-outline-primary", !data.liked);
         });
     });
 
-    // Like dla komentarzy
     document.addEventListener("click", e => {
         const btn = e.target.closest(".like-comment-btn");
         if (!btn) return;
@@ -183,7 +185,12 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(res => res.json())
         .then(data => {
-            btn.querySelector(".comment-like-count").textContent = data.count;
+
+            const countSpan = btn.querySelector(".comment-like-count");
+            if (countSpan) {
+                countSpan.textContent = data.likes_count; 
+            }
+
             btn.classList.toggle("btn-primary", data.liked);
             btn.classList.toggle("btn-outline-primary", !data.liked);
         });

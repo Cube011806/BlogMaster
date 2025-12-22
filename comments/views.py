@@ -36,6 +36,9 @@ def add_comment(request, post_pk):
 
 @login_required
 def like_comment(request, pk):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Musisz być zalogowany, aby polubić komentarz!'}, status=403)
+
     comment = get_object_or_404(Comment, pk=pk)
 
     if request.user in comment.likes.all():
@@ -45,7 +48,4 @@ def like_comment(request, pk):
         comment.likes.add(request.user)
         liked = True
 
-    return JsonResponse({
-        "liked": liked,
-        "count": comment.likes.count()
-    })
+    return JsonResponse({'liked': liked, 'likes_count': comment.likes.count()})

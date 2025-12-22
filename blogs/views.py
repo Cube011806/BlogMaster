@@ -18,7 +18,7 @@ def blog_detail(request, pk):
 
 @login_required
 def user_blogs(request):
-    blogs = request.user.blogs.all()  # używamy related_name='blogs' z modelu Blog
+    blogs = request.user.blogs.order_by('-created_at')  # używamy related_name='blogs' z modelu Blog
     return render(request, 'blogs/user_blogs.html', {'blogs': blogs})
 
 @login_required

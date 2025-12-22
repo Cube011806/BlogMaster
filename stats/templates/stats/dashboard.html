@@ -4,8 +4,54 @@
 body {
     background-color: #f3f4f6;
     font-family: 'Segoe UI', sans-serif;
-  }
+}
+
+.stats-card {
+    background: white;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+.stats-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.stats-label {
+    font-size: 16px;
+    color: #555;
+}
 </style>
-<h1>Statystyki</h1>
-<p>Masz {{ blogs_count }} blog(ów) oraz w sumie {{ posts_count }} post(ów).</p>
+
+<div class="container mt-4">
+    <h1 class="mb-4">Twoje statystyki</h1>
+
+    <div class="stats-card">
+        <div class="stats-number">{{ blogs_count }}</div>
+        <div class="stats-label">Blogów</div>
+    </div>
+
+    <div class="stats-card">
+        <div class="stats-number">{{ posts_count }}</div>
+        <div class="stats-label">Postów</div>
+    </div>
+
+    <div class="stats-card">
+        <div class="stats-number">{{ comments_count }}</div>
+        <div class="stats-label">Komentarzy pod Twoimi postami</div>
+    </div>
+
+    <div class="stats-card">
+        <div class="stats-number">{{ post_likes }}</div>
+        <div class="stats-label">Polubień Twoich postów</div>
+    </div>
+
+    <div class="stats-card">
+        <div class="stats-number">{{ visits_count }}</div>
+        <div class="stats-label">Odwiedzin Twoich postów</div>
+    </div>
+</div>
 {% endblock %}

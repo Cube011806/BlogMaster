@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Post
+from .models import Post, PostVisit
 from .forms import PostForm
 from blogs.models import Blog
 from comments.forms import CommentForm
 from django.http import JsonResponse
+
 
 
 def post_list(request):
@@ -14,11 +15,31 @@ def post_list(request):
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
 
+    # Zapis odwiedzin posta
+    PostVisit.objects.create(
+        post=post,
+        user=request.user if request.user.is_authenticated else None,
+        ip=request.META.get("REMOTE_ADDR")
+    )
+
     # Poprzedni post (największy ID mniejszy niż obecny)
     previous_post = Post.objects.filter(id__lt=post.id).order_by('-id').first()
 
     # Następny post (najmniejszy ID większy niż obecny)
     next_post = Post.objects.filter(id__gt=post.id).order_by('id').first()
+
+    # Poprzedni post (największy ID mniejszy niż obecny)
+    previous_post = Post.objects.filter(
+    blog=post.blog,
+    id__lt=post.id
+    ).order_by('-id').first()
+
+    # Następny post (najmniejszy ID większy niż obecny)
+    next_post = Post.objects.filter(
+        blog=post.blog,
+        id__gt=post.id
+    ).order_by('id').first()
+
 
     top_level_comments = post.comments.filter(parent__isnull=True)
 
@@ -29,6 +50,7 @@ def post_detail(request, pk):
         'previous_post': previous_post,
         'next_post': next_post,
     })
+
 
 
 @login_required
@@ -83,6 +105,9 @@ def post_delete(request, pk):
 
 @login_required
 def post_like(request, pk):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Musisz być zalogowany, aby polubić post!'}, status=403)
+
     post = get_object_or_404(Post, pk=pk)
 
     if request.user in post.likes.all():
@@ -92,7 +117,4 @@ def post_like(request, pk):
         post.likes.add(request.user)
         liked = True
 
-    return JsonResponse({
-        "liked": liked,
-        "count": post.likes.count()
-    })
+    return JsonResponse({'liked': liked, 'likes_count': post.likes.count()})

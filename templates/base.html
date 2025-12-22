@@ -18,7 +18,7 @@
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item"><a class="nav-link" href="/blogs/">Wszystkie blogi</a></li>
                         {% if user.is_authenticated %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'user_blogs' %}">Twoje blogi</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'user_blogs' %}">Zarządzaj twoimi blogami</a></li>
                             <li class="nav-item"><a class="nav-link" href="/stats/">Twoje statystyki</a></li>
                         {% endif %}
                     </ul>
