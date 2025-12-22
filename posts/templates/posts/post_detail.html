@@ -104,11 +104,22 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .then(res => res.json())
             .then(data => {
+
                 if (parentId) {
+                    // Dodawanie odpowiedzi
                     const container = document.querySelector(`#comment-${parentId} .ms-4`);
                     container.insertAdjacentHTML("beforeend", data.html);
+
                 } else {
+                    // Dodawanie komentarza top-level
                     const list = document.querySelector("#comments-container");
+
+                    // USUWANIE "Brak komentarzy."
+                    const emptyMsg = list.querySelector("p");
+                    if (emptyMsg && emptyMsg.textContent.includes("Brak komentarzy")) {
+                        emptyMsg.remove();
+                    }
+
                     list.insertAdjacentHTML("afterbegin", data.html);
                 }
 
@@ -128,9 +139,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Obsługa formularzy komentarzy głównych
     document.querySelectorAll(".comment-form").forEach(form => handleFormSubmit(form));
+
+    // Obsługa formularzy odpowiedzi
     attachReplyForms();
 
+    // Like dla postów
     document.addEventListener("click", e => {
         const btn = e.target.closest(".like-post-btn");
         if (!btn) return;
@@ -152,6 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // Like dla komentarzy
     document.addEventListener("click", e => {
         const btn = e.target.closest(".like-comment-btn");
         if (!btn) return;
@@ -175,5 +191,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 </script>
+
 
 {% endblock %}
