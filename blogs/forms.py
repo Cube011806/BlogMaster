@@ -24,16 +24,22 @@ class BlogForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 4}),
         }
 
+    def __init__(self, *args, **kwargs):
+        blog = kwargs.get('instance', None)
+        super().__init__(*args, **kwargs)
+
+        # Ustawiamy kategorię przy edycji
+        if blog and blog.category:
+            self.fields['existing_category'].initial = blog.category
+
     def clean(self):
         cleaned = super().clean()
         existing = cleaned.get("existing_category")
         new = cleaned.get("new_category")
 
-        # Nie można wybrać i wpisać jednocześnie
         if existing and new:
             self.add_error("new_category", "Nie możesz wybrać i wpisać kategorii jednocześnie.")
 
-        # Jeśli wpisano nową kategorię, sprawdzamy czy już istnieje
         if new:
             if BlogCategory.objects.filter(name__iexact=new.strip()).exists():
                 self.add_error("new_category", "Taka kategoria już istnieje — wybierz ją z listy.")

@@ -87,6 +87,7 @@ def blog_edit(request, pk):
 
     return render(request, 'blogs/blog_form.html', {
         'form': form,
+        'blog': blog,
         'is_edit': True,
     })
 

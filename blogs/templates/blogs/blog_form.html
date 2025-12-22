@@ -54,6 +54,14 @@ input:focus, textarea:focus, select:focus {
     outline: none;
 }
 
+input[type="file"] {
+    padding: 8px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #f9fafb;
+}
+
 .btn-submit {
     width: 100%;
     background-color: #3b82f6;
@@ -86,11 +94,10 @@ input:focus, textarea:focus, select:focus {
     margin-top: 4px;
 }
 
-#image-preview {
+.preview-img {
     max-width: 100%;
     border-radius: 8px;
     margin-top: 10px;
-    display: none;
 }
 </style>
 
@@ -136,10 +143,19 @@ input:focus, textarea:focus, select:focus {
 
     <!-- Obrazek -->
     <div class="form-group">
-      {{ form.image.label_tag }}
-      {{ form.image }}
+      <label for="id_image">Zdjęcie bloga:</label>
+      <input type="file" name="image" id="id_image" accept="image/*">
       {{ form.image.errors }}
-      <img id="image-preview" src="#" alt="Podgląd zdjęcia">
+
+      <!-- OPCJA 1: DWA IMG -->
+
+      {% if is_edit and blog.image %}
+          <!-- Podgląd aktualnego obrazka -->
+          <img id="image-preview" class="preview-img" src="{{ blog.image.url }}">
+      {% else %}
+          <!-- Pusty podgląd przy dodawaniu -->
+          <img id="image-preview" class="preview-img" src="" style="display:none;">
+      {% endif %}
     </div>
 
     <button type="submit" class="btn-submit">
@@ -153,18 +169,15 @@ input:focus, textarea:focus, select:focus {
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    const input = document.querySelector("#id_image");
-    const preview = document.querySelector("#image-preview");
+document.addEventListener("DOMContentLoaded", function () {
+    var input = document.getElementById("id_image");
+    var preview = document.getElementById("image-preview");
 
-    input.addEventListener("change", () => {
-        const file = input.files[0];
+    input.addEventListener("change", function () {
+        var file = input.files[0];
         if (file) {
             preview.src = URL.createObjectURL(file);
             preview.style.display = "block";
-        } else {
-            preview.src = "#";
-            preview.style.display = "none";
         }
     });
 });
