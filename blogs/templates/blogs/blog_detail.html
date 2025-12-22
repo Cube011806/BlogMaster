@@ -23,7 +23,7 @@ body {
     <hr>
 
     {% if request.user == blog.owner %}
-        <a href="{% url 'post_create' blog.pk %}" class="btn btn-success mb-3">Dodaj post</a>
+        <a href="{% url 'post_create' blog.pk %}" class="btn btn-primary mb-3">Dodaj post</a>
     {% endif %}
 
     <h3>Posty:</h3>
