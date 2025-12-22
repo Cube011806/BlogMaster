@@ -14,13 +14,41 @@ body {
 
 <div class="mb-4">{{ post.content|linebreaks }}</div>
 
-<button class="btn btn-sm like-post-btn 
-        {% if user in post.likes.all %}btn-primary{% else %}btn-outline-primary{% endif %}"
-        data-id="{{ post.id }}">
-    👍 <span class="post-like-count">{{ post.likes.count }}</span>
-</button>
+<div class="d-flex justify-content-between align-items-center my-4">
+    <!-- Lewa strona: poprzedni post -->
+    <div>
+        {% if previous_post %}
+            <a href="{% url 'post_detail' previous_post.id %}" class="btn btn-primary">
+                ← Poprzedni post
+            </a>
+        {% else %}
+            <button class="btn btn-secondary" disabled>← Poprzedni post</button>
+        {% endif %}
+    </div>
 
-<a href="{% url 'blog_detail' post.blog.pk %}" class="btn btn-secondary ms-2">Powrót</a>
+    <!-- Środek: tekst + przycisk like -->
+    <div class="text-center">
+        <span class="me-2">Podobał Ci się ten post?</span>
+
+        <button class="btn btn-sm like-post-btn 
+                {% if user in post.likes.all %}btn-primary{% else %}btn-outline-primary{% endif %}"
+                data-id="{{ post.id }}">
+            👍 <span class="post-like-count">{{ post.likes.count }}</span>
+        </button>
+    </div>
+
+    <!-- Prawa strona: następny post -->
+    <div>
+        {% if next_post %}
+            <a href="{% url 'post_detail' next_post.id %}" class="btn btn-primary">
+                Następny post →
+            </a>
+        {% else %}
+            <button class="btn btn-secondary" disabled>Następny post →</button>
+        {% endif %}
+    </div>
+</div>
+
 
 <hr>
 
@@ -140,8 +168,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(res => res.json())
         .then(data => {
             btn.querySelector(".comment-like-count").textContent = data.count;
-            btn.classList.toggle("btn-danger", data.liked);
-            btn.classList.toggle("btn-outline-secondary", !data.liked);
+            btn.classList.toggle("btn-primary", data.liked);
+            btn.classList.toggle("btn-outline-primary", !data.liked);
         });
     });
 

@@ -3,8 +3,8 @@
     <p>{{ comment.text|linebreaks }}</p>
 
     <button class="btn btn-sm like-comment-btn 
-            {% if user in comment.likes.all %}btn-danger{% else %}btn-outline-secondary{% endif %}"
-            data-id="{{ comment.id }}">
+    {% if user in comment.likes.all %}btn-primary{% else %}btn-outline-primary{% endif %}"
+        data-id="{{ comment.id }}">
         👍 <span class="comment-like-count">{{ comment.likes.count }}</span>
     </button>
 

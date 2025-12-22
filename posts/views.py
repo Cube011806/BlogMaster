@@ -13,13 +13,23 @@ def post_list(request):
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
+
+    # Poprzedni post (największy ID mniejszy niż obecny)
+    previous_post = Post.objects.filter(id__lt=post.id).order_by('-id').first()
+
+    # Następny post (najmniejszy ID większy niż obecny)
+    next_post = Post.objects.filter(id__gt=post.id).order_by('id').first()
+
     top_level_comments = post.comments.filter(parent__isnull=True)
 
     return render(request, 'posts/post_detail.html', {
         'post': post,
         'comment_form': CommentForm(),
-        'top_level_comments': top_level_comments
+        'top_level_comments': top_level_comments,
+        'previous_post': previous_post,
+        'next_post': next_post,
     })
+
 
 @login_required
 def post_create(request, blog_pk):
