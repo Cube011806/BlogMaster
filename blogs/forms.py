@@ -14,10 +14,11 @@ class BlogForm(forms.ModelForm):
 
     class Meta:
         model = Blog
-        fields = ['title', 'description', 'existing_category', 'new_category']
+        fields = ['title', 'description', 'existing_category', 'new_category', 'image']
         labels = {
             'title': 'Tytuł bloga',
             'description': 'Opis bloga',
+            'image': 'Zdjęcie bloga'
         }
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),

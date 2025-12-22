@@ -45,6 +45,10 @@ INSTALLED_APPS = [
     'posts',
 ]
 
+MEDIA_URL = '/wwwroot/'
+MEDIA_ROOT = BASE_DIR / 'wwwroot'
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

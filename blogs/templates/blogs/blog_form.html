@@ -6,7 +6,6 @@
 
 {% block content %}
 <style>
-/* Twój CSS zostaje bez zmian */
 body {
     background-color: #f3f4f6;
     font-family: 'Segoe UI', sans-serif;
@@ -86,6 +85,13 @@ input:focus, textarea:focus, select:focus {
     border-radius: 6px;
     margin-top: 4px;
 }
+
+#image-preview {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 10px;
+    display: none;
+}
 </style>
 
 <div class="form-container">
@@ -97,7 +103,7 @@ input:focus, textarea:focus, select:focus {
     {% endif %}
   </h1>
 
-  <form method="post">
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
     <!-- Tytuł -->
@@ -128,6 +134,14 @@ input:focus, textarea:focus, select:focus {
       {{ form.new_category.errors }}
     </div>
 
+    <!-- Obrazek -->
+    <div class="form-group">
+      {{ form.image.label_tag }}
+      {{ form.image }}
+      {{ form.image.errors }}
+      <img id="image-preview" src="#" alt="Podgląd zdjęcia">
+    </div>
+
     <button type="submit" class="btn-submit">
       {% if is_edit %}
         Zapisz zmiany
@@ -138,4 +152,21 @@ input:focus, textarea:focus, select:focus {
   </form>
 </div>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const input = document.querySelector("#id_image");
+    const preview = document.querySelector("#image-preview");
+
+    input.addEventListener("change", () => {
+        const file = input.files[0];
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = "block";
+        } else {
+            preview.src = "#";
+            preview.style.display = "none";
+        }
+    });
+});
+</script>
 {% endblock %}

@@ -4,10 +4,10 @@ from .forms import BlogForm
 from django.contrib.auth.decorators import login_required
 
 
-# Create your views here.
 def blog_list(request):
     blogs = Blog.objects.order_by('-created_at')
     return render(request, 'blogs/blog_list.html', {'blogs': blogs})
+
 
 def blog_detail(request, pk):
     blog = get_object_or_404(Blog, pk=pk)
@@ -17,15 +17,17 @@ def blog_detail(request, pk):
         'posts': posts,
     })
 
+
 @login_required
 def user_blogs(request):
-    blogs = request.user.blogs.order_by('-created_at')  # używamy related_name='blogs' z modelu Blog
+    blogs = request.user.blogs.order_by('-created_at')
     return render(request, 'blogs/user_blogs.html', {'blogs': blogs})
+
 
 @login_required
 def blog_create(request):
     if request.method == 'POST':
-        form = BlogForm(request.POST)
+        form = BlogForm(request.POST, request.FILES)
         if form.is_valid():
             blog = form.save(commit=False)
             blog.owner = request.user
@@ -39,6 +41,10 @@ def blog_create(request):
                 category = BlogCategory.objects.create(name=new.strip())
                 blog.category = category
 
+            # zapis obrazka
+            if 'image' in request.FILES:
+                blog.image = request.FILES['image']
+
             blog.save()
             return redirect('user_blogs')
     else:
@@ -49,12 +55,13 @@ def blog_create(request):
         'is_edit': False,
     })
 
+
 @login_required
 def blog_edit(request, pk):
     blog = get_object_or_404(Blog, pk=pk, owner=request.user)
 
     if request.method == 'POST':
-        form = BlogForm(request.POST, instance=blog)
+        form = BlogForm(request.POST, request.FILES, instance=blog)  # <-- WAŻNE
         if form.is_valid():
 
             existing = form.cleaned_data['existing_category']
@@ -66,7 +73,11 @@ def blog_edit(request, pk):
                 category = BlogCategory.objects.create(name=new.strip())
                 blog.category = category
             else:
-                blog.category = None  # jeśli ktoś usunie kategorię
+                blog.category = None
+
+            # zapis obrazka (jeśli zmieniono)
+            if 'image' in request.FILES:
+                blog.image = request.FILES['image']
 
             form.save()
             return redirect('user_blogs')

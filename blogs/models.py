@@ -17,6 +17,7 @@ class Blog(models.Model):
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     category = models.ForeignKey(BlogCategory, null=True, blank=True, on_delete=models.SET_NULL)
+    image = models.ImageField(upload_to='images/', null=True, blank=True) 
 
     def __str__(self):
         return self.title
