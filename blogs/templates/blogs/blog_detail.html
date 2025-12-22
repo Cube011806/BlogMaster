@@ -17,7 +17,14 @@ body {
 
 <div class="container mt-4">
     <h1>Blog: {{ blog.title }}</h1>
-    <p class="text-muted">Właściciel: {{ blog.owner.email }} — {{ blog.created_at }}</p>
+
+    <p class="text-muted">
+        {% if blog.category %}
+            <span class="badge bg-secondary">{{ blog.category.name }}</span>
+        {% endif %}
+        Właściciel: {{ blog.owner.email }} — {{ blog.created_at }}
+    </p>
+
     <hr>
     <p>{{ blog.description }}</p>
     <hr>
@@ -30,7 +37,7 @@ body {
 
     <div class="list-group">
         {% for post in posts %}
-            <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+            <div class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                 <div>
                     <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none text-dark">
                         <h5 class="mb-1">{{ post.title }}</h5>
