@@ -11,10 +11,15 @@ class BlogForm(forms.ModelForm):
         required=False,
         label="Lub wpisz nową kategorię"
     )
+    is_public = forms.BooleanField(
+        required=False,
+        label="Blog publiczny?",
+        initial=True
+    )
 
     class Meta:
         model = Blog
-        fields = ['title', 'description', 'existing_category', 'new_category', 'image']
+        fields = ['title', 'description', 'existing_category', 'new_category', 'image', 'is_public']
         labels = {
             'title': 'Tytuł bloga',
             'description': 'Opis bloga',
@@ -28,7 +33,6 @@ class BlogForm(forms.ModelForm):
         blog = kwargs.get('instance', None)
         super().__init__(*args, **kwargs)
 
-        # Ustawiamy kategorię przy edycji
         if blog and blog.category:
             self.fields['existing_category'].initial = blog.category
 

@@ -5,8 +5,9 @@ from django.contrib.auth.decorators import login_required
 
 
 def blog_list(request):
-    blogs = Blog.objects.order_by('-created_at')
+    blogs = Blog.objects.filter(is_public=True).order_by('-created_at')
     return render(request, 'blogs/blog_list.html', {'blogs': blogs})
+
 
 
 def blog_detail(request, pk):
@@ -41,7 +42,8 @@ def blog_create(request):
                 category = BlogCategory.objects.create(name=new.strip())
                 blog.category = category
 
-            # zapis obrazka
+            blog.is_public = form.cleaned_data['is_public']  # ← TU
+
             if 'image' in request.FILES:
                 blog.image = request.FILES['image']
 
@@ -61,7 +63,7 @@ def blog_edit(request, pk):
     blog = get_object_or_404(Blog, pk=pk, owner=request.user)
 
     if request.method == 'POST':
-        form = BlogForm(request.POST, request.FILES, instance=blog)  # <-- WAŻNE
+        form = BlogForm(request.POST, request.FILES, instance=blog)
         if form.is_valid():
 
             existing = form.cleaned_data['existing_category']
@@ -75,7 +77,8 @@ def blog_edit(request, pk):
             else:
                 blog.category = None
 
-            # zapis obrazka (jeśli zmieniono)
+            blog.is_public = form.cleaned_data['is_public']  # ← TU
+
             if 'image' in request.FILES:
                 blog.image = request.FILES['image']
 
@@ -90,6 +93,7 @@ def blog_edit(request, pk):
         'blog': blog,
         'is_edit': True,
     })
+
 
 
 @login_required

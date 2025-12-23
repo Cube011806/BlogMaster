@@ -28,7 +28,15 @@ body {
 
                         <div>
                             <a href="{% url 'blog_detail' blog.id %}" class="text-decoration-none text-dark">
-                                <h5 class="mb-1">{{ blog.title }}</h5>
+                                <h5 class="mb-1">
+                                    {{ blog.title }}
+
+                                    {% if blog.is_public %}
+                                        <span class="badge bg-success">🌍 Publiczny</span>
+                                    {% else %}
+                                        <span class="badge bg-dark">🔒 Prywatny</span>
+                                    {% endif %}
+                                </h5>
 
                                 {% if blog.category %}
                                     <span class="badge bg-secondary">{{ blog.category.name }}</span>

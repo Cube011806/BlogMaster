@@ -141,13 +141,18 @@ input[type="file"] {
       {{ form.new_category.errors }}
     </div>
 
+    <div class="form-group">
+      {{ form.is_public.label_tag }}
+      {{ form.is_public }}
+      {{ form.is_public.errors }}
+   </div>
+
+
     <!-- Obrazek -->
     <div class="form-group">
       <label for="id_image">Zdjęcie bloga:</label>
       <input type="file" name="image" id="id_image" accept="image/*">
       {{ form.image.errors }}
-
-      <!-- OPCJA 1: DWA IMG -->
 
       {% if is_edit and blog.image %}
           <!-- Podgląd aktualnego obrazka -->
