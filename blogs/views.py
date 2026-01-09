@@ -5,8 +5,23 @@ from django.contrib.auth.decorators import login_required
 
 
 def blog_list(request):
-    blogs = Blog.objects.filter(is_public=True).order_by('-created_at')
-    return render(request, 'blogs/blog_list.html', {'blogs': blogs})
+    category_id = request.GET.get('category')
+
+    blogs = Blog.objects.filter(is_public=True)
+
+    if category_id:
+        blogs = blogs.filter(category_id=category_id)
+
+    blogs = blogs.order_by('-created_at')
+
+    categories = BlogCategory.objects.all()
+
+    return render(request, 'blogs/blog_list.html', {
+        'blogs': blogs,
+        'categories': categories,
+        'selected_category': category_id,
+    })
+
 
 
 

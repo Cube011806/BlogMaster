@@ -13,6 +13,26 @@ body {
 <div class="container mt-4">
     <h1 class="mb-4">Blogi użytkowników:</h1>
 
+    <!-- FILTROWANIE KATEGORII -->
+    <div class="mb-4">
+        <strong>Filtruj po kategorii:</strong><br>
+
+        <!-- Wszystkie -->
+        <a href="{% url 'blog_list' %}"
+           class="btn btn-sm mt-2 {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            Wszystkie
+        </a>
+
+        <!-- Kategorie -->
+        {% for cat in categories %}
+            <a href="?category={{ cat.id }}"
+               class="btn btn-sm mt-2 {% if selected_category|add:'0' == cat.id|stringformat:'s' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                {{ cat.name }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- LISTA BLOGÓW -->
     {% if blogs %}
         <div class="list-group">
             {% for blog in blogs %}
