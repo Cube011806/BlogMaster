@@ -1,12 +1,56 @@
 {% extends 'base.html' %}
 {% block title %}BlogMaster - Strona główna{% endblock %}
+
 {% block content %}
 <style>
 body {
     background-color: #f3f4f6;
     font-family: 'Segoe UI', sans-serif;
-  }
+}
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+}
 </style>
-<h1 class="text-center">Witaj w BlogMaster!</h1>
-<p class="text-center">Twórz, zarządzaj i obserwuj swoje blogi.</p>
+
+<div class="container mt-4">
+
+    <h1 class="text-center mb-3">Witaj w BlogMaster!</h1>
+    <p class="text-center mb-5">Twórz, zarządzaj i obserwuj swoje blogi.</p>
+
+    <h3 class="mb-4">Najnowsze wpisy:</h3>
+
+    {% if posts %}
+        <div class="row">
+            {% for post in posts %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.title }}</h5>
+
+                            <p class="text-muted" style="font-size: 14px;">
+                                {{ post.created_at|date:"d.m.Y H:i" }}<br>
+                                Blog: {{ post.blog.title }}
+                            </p>
+
+                            <a href="{% url 'post_detail' post.id %}" class="btn btn-primary btn-sm">
+                                Czytaj więcej
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <div class="alert alert-info">
+            Brak wpisów do wyświetlenia.
+        </div>
+    {% endif %}
+
+</div>
 {% endblock %}
