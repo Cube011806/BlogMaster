@@ -58,7 +58,7 @@ def post_create(request, blog_pk):
     blog = get_object_or_404(Blog, pk=blog_pk)
 
     if request.method == 'POST':
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)  # DODANO request.FILES
         if form.is_valid():
             post = form.save(commit=False)
             post.blog = blog
@@ -74,12 +74,13 @@ def post_create(request, blog_pk):
         'is_edit': False,
     })
 
+
 @login_required
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk, author=request.user)
 
     if request.method == 'POST':
-        form = PostForm(request.POST, instance=post)
+        form = PostForm(request.POST, request.FILES, instance=post)  # DODANO request.FILES
         if form.is_valid():
             form.save()
             return redirect('blog_detail', pk=post.blog.pk)
@@ -91,6 +92,7 @@ def post_edit(request, pk):
         'blog': post.blog,
         'is_edit': True,
     })
+
 
 
 @login_required

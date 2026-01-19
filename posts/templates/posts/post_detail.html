@@ -20,7 +20,7 @@ body {
     {{ post.created_at }}
 </p>
 
-<div class="mb-4">{{ post.content|linebreaks }}</div>
+<div class="mb-4">{{ post.content|safe }}</div>
 
 <div class="d-flex justify-content-between align-items-center my-4">
     <div>
