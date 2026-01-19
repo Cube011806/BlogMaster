@@ -1,7 +1,7 @@
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+LANGUAGE_CODE = 'pl'
 SECRET_KEY = 'django-insecure-(09355$&ob^jvx-nx!y4ixu3sdd2%(%fv88u9q*c)18m)_9ak2'
 DEBUG = True
 ALLOWED_HOSTS = []
@@ -35,13 +35,19 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 CKEDITOR_UPLOAD_PATH = "uploads/"
 
+CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
+
+CKEDITOR_LANGUAGE = 'pl'
+
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'full',
         'height': 300,
         'width': '100%',
+        'language': 'pl',
     },
 }
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -87,7 +93,6 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 
 AUTH_PASSWORD_VALIDATORS = []
 
-LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
