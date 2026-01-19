@@ -2,26 +2,41 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Blog, BlogCategory
 from .forms import BlogForm
 from django.contrib.auth.decorators import login_required
-
+from django.db.models import Count, Q
 
 def blog_list(request):
     category_id = request.GET.get('category')
 
-    blogs = Blog.objects.filter(is_public=True)
+    # Lista blogów widocznych dla użytkownika
+    blogs = Blog.objects.filter(
+        Q(is_public=True) |
+        Q(owner=request.user if request.user.is_authenticated else None)
+    )
 
     if category_id:
         blogs = blogs.filter(category_id=category_id)
 
     blogs = blogs.order_by('-created_at')
 
-    categories = BlogCategory.objects.all()
+    # Kategorie z publicznych blogów ORAZ prywatnych blogów użytkownika
+    if request.user.is_authenticated:
+        categories = BlogCategory.objects.annotate(
+            blog_count=Count(
+                'blog',
+                filter=Q(blog__is_public=True) | Q(blog__owner=request.user)
+            )
+        ).filter(blog_count__gt=0)
+    else:
+        # Niezalogowany widzi tylko kategorie z publicznych blogów
+        categories = BlogCategory.objects.annotate(
+            blog_count=Count('blog', filter=Q(blog__is_public=True))
+        ).filter(blog_count__gt=0)
 
     return render(request, 'blogs/blog_list.html', {
         'blogs': blogs,
         'categories': categories,
         'selected_category': category_id,
     })
-
 
 
 
