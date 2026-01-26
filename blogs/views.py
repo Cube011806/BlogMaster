@@ -7,30 +7,23 @@ from django.db.models import Count, Q
 def blog_list(request):
     category_id = request.GET.get('category')
 
-    # Lista blogów widocznych dla użytkownika
-    blogs = Blog.objects.filter(
-        Q(is_public=True) |
-        Q(owner=request.user if request.user.is_authenticated else None)
-    )
+    #  Na ogólnej liście chcemy widzieć tylko publiczne blogi\
+    blogs = Blog.objects.filter(is_public=True)
 
     if category_id:
         blogs = blogs.filter(category_id=category_id)
 
     blogs = blogs.order_by('-created_at')
 
-    # Kategorie z publicznych blogów ORAZ prywatnych blogów użytkownika
-    if request.user.is_authenticated:
-        categories = BlogCategory.objects.annotate(
-            blog_count=Count(
-                'blog',
-                filter=Q(blog__is_public=True) | Q(blog__owner=request.user)
-            )
-        ).filter(blog_count__gt=0)
-    else:
-        # Niezalogowany widzi tylko kategorie z publicznych blogów
-        categories = BlogCategory.objects.annotate(
-            blog_count=Count('blog', filter=Q(blog__is_public=True))
-        ).filter(blog_count__gt=0)
+    # Pobieramy tylko kategorie, które mają co najmniej jeden publiczny blog
+    # Niezależnie od tego, czy użytkownik jest zalogowany, czy nie,
+    # na liście ogólnej nie chcemy widzieć "pustych" kategorii (tych tylko z prywatnymi blogami).
+    categories = BlogCategory.objects.annotate(
+        public_blog_count=Count(
+            'blog',
+            filter=Q(blog__is_public=True)
+        )
+    ).filter(public_blog_count__gt=0)
 
     return render(request, 'blogs/blog_list.html', {
         'blogs': blogs,

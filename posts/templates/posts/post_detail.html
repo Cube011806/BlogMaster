@@ -1,81 +1,248 @@
 {% extends 'base.html' %}
+
+{% block title %}{{ post.title }} - BlogMaster{% endblock %}
+
 {% block content %}
 <style>
-body {
-    background-color: #f3f4f6;
-    font-family: 'Segoe UI', sans-serif;
-}
+    body {
+        background-color: #f3f4f6;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+    }
+
+    .post-detail-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: none;
+        margin-bottom: 30px;
+    }
+
+    .post-title {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: #212529;
+        line-height: 1.1;
+    }
+
+    .post-meta {
+        font-size: 0.95rem;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .blog-info-text {
+        font-weight: 600;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+    }
+
+    .post-body {
+        font-size: 1.15rem;
+        line-height: 1.8;
+        color: #333;
+    }
+
+    .post-body img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        margin: 20px 0;
+    }
+
+    .nav-post-btn {
+        border-radius: 12px;
+        padding: 12px 20px;
+        font-weight: 600;
+        transition: all 0.2s;
+        text-decoration: none;
+        color: #212529;
+    }
+
+    .nav-post-btn:hover {
+        background-color: #fff;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        color: #0d6efd;
+    }
+
+    .like-section {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 25px;
+        border: 1px solid #e9ecef;
+    }
+
+    .like-post-btn {
+        padding: 10px 25px;
+        border-radius: 10px;
+        font-weight: 700;
+        transition: all 0.2s;
+    }
+
+    .btn-comment-submit {
+        background: linear-gradient(45deg, #0d6efd, #004db3);
+        border: none;
+        border-radius: 8px;
+        padding: 10px 25px;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
+        color: white;
+        transition: all 0.2s;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .btn-comment-submit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(13, 110, 253, 0.4);
+        color: white;
+    }
+
+    .comment-section-title {
+        font-weight: 800;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-back-blog {
+        color: #6c757d;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
+        transition: color 0.2s;
+    }
+
+    .btn-back-blog:hover {
+        color: #0d6efd;
+    }
+
+    .badge-cat {
+        font-size: 0.85rem; 
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
 </style>
 
-<h1>Post: {{ post.title }}</h1>
+<div class="container mt-5" style="max-width: 900px;">
+    
+    <a href="{% url 'blog_detail' post.blog.id %}" class="btn-back-blog">
+        <i class="fas fa-arrow-left"></i> Powrót do bloga
+    </a>
 
-<p class="text-muted">
+    <article class="post-detail-card">
+        <header class="mb-4">
+            <h1 class="post-title mb-3">{{ post.title }}</h1>
+            
+            {% if post.blog.category %}
+                <div class="mb-3">
+                    <span class="badge bg-secondary badge-cat">{{ post.blog.category.name }}</span>
+                </div>
+            {% endif %}
+            
+            <div class="mb-3 fs-5 blog-info-text">
+                <i class="fas fa-bookmark me-2 text-muted"></i>{{ post.blog.title }}
+            </div>
 
-    {% if post.blog.category %}
-        <span class="badge bg-secondary">{{ post.blog.category.name }}</span>
-    {% endif %}
+            <div class="post-meta pt-2">
+                <span><i class="fas fa-user-circle me-1"></i> {{ post.author }}</span>
+                <span class="text-muted opacity-50">|</span>
+                <span><i class="far fa-calendar-alt me-1"></i> {{ post.created_at|date:"d M Y, H:i" }}</span>
+            </div>
+        </header>
 
-    Blog: {{ post.blog.title }} —
-    Autor: {{ post.author }} —
-    {{ post.created_at }}
-</p>
+        <hr class="my-4 opacity-25">
 
-<div class="mb-4">{{ post.content|safe }}</div>
+        <div class="post-body mb-5">
+            {{ post.content|safe }}
+        </div>
 
-<div class="d-flex justify-content-between align-items-center my-4">
-    <div>
-        {% if previous_post %}
-            <a href="{% url 'post_detail' previous_post.id %}" class="btn btn-primary">
-                ← Poprzedni post
-            </a>
-        {% else %}
-            <button class="btn btn-secondary" disabled>← Poprzedni post</button>
-        {% endif %}
-    </div>
+        <div class="like-section text-center mb-4">
+            <h5 class="mb-3 fw-bold">Podobał Ci się ten post?</h5>
+            {% if user.is_authenticated %}
+                <button class="btn like-post-btn shadow-sm 
+                    {% if user in post.likes.all %}btn-primary{% else %}btn-outline-primary{% endif %}"
+                    data-id="{{ post.id }}">
+                    <span style="pointer-events:none;">👍 <span class="post-like-count">{{ post.likes.count }}</span></span>
+                </button>
+            {% else %}
+                <p class="text-muted mb-0 small">
+                    <a href="{% url 'login' %}" class="fw-bold text-primary text-decoration-none">Zaloguj się</a>, aby polubić ten post!
+                </p>
+            {% endif %}
+        </div>
 
-    <div class="text-center">
-        <span class="me-2">Podobał Ci się ten post?</span>
+        <div class="d-flex justify-content-between gap-3">
+            <div class="flex-grow-1">
+                {% if previous_post %}
+                    <a href="{% url 'post_detail' previous_post.id %}" class="btn btn-light nav-post-btn border w-100 text-start">
+                        <small class="d-block text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Poprzedni post</small>
+                        <span class="text-truncate d-block">{{ previous_post.title }}</span>
+                    </a>
+                {% else %}
+                    <div class="btn btn-light nav-post-btn border w-100 text-start opacity-50 cursor-not-allowed">
+                        <small class="d-block text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Poprzedni post</small>
+                        <span>Brak starszych postów</span>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="flex-grow-1">
+                {% if next_post %}
+                    <a href="{% url 'post_detail' next_post.id %}" class="btn btn-light nav-post-btn border w-100 text-end">
+                        <small class="d-block text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Następny post</small>
+                        <span class="text-truncate d-block">{{ next_post.title }}</span>
+                    </a>
+                {% else %}
+                    <div class="btn btn-light nav-post-btn border w-100 text-end opacity-50 cursor-not-allowed">
+                        <small class="d-block text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Następny post</small>
+                        <span>Brak nowszych postów</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </article>
+
+    <div class="post-detail-card p-4 p-md-5">
+        <h3 class="comment-section-title">
+            <i class="far fa-comments text-primary"></i> Komentarze
+        </h3>
 
         {% if user.is_authenticated %}
-        <button class="btn btn-sm like-post-btn 
-            {% if user in post.likes.all %}btn-primary{% else %}btn-outline-primary{% endif %}"
-            data-id="{{ post.id }}">
-            <span style="pointer-events:none;">👍 <span class="post-like-count">{{ post.likes.count }}</span></span>
-        </button>
+            <div class="mb-5">
+                {% include 'comments/comment_form.html' with post=post comment_form=comment_form %}
+            </div>
         {% else %}
-            <p>Zaloguj się, aby polubić ten post!</p>
+            <div class="alert alert-light border text-center py-4 mb-5">
+                <p class="mb-0 text-muted">
+                    <a href="{% url 'login' %}" class="fw-bold text-primary text-decoration-none">Zaloguj się</a>, aby dodać komentarz!
+                </p>
+            </div>
         {% endif %}
+
+        <hr class="my-4 opacity-25">
+
+        <div id="comments-container">
+            {% for comment in top_level_comments %}
+                {% include "comments/comment.html" with comment=comment post=post %}
+            {% empty %}
+                <div class="text-center py-4 text-muted">
+                    <i class="fas fa-comment-slash fa-2x mb-2 opacity-25"></i>
+                    <p>Brak komentarzy. Bądź pierwszy!</p>
+                </div>
+            {% endfor %}
+        </div>
     </div>
-
-    <div>
-        {% if next_post %}
-            <a href="{% url 'post_detail' next_post.id %}" class="btn btn-primary">
-                Następny post →
-            </a>
-        {% else %}
-            <button class="btn btn-secondary" disabled>Następny post →</button>
-        {% endif %}
-    </div>
-</div>
-
-<hr>
-
-<h4>Komentarze</h4>
-
-{% if user.is_authenticated %}
-    {% include 'comments/comment_form.html' with post=post comment_form=comment_form %}
-{% else %}
-    <p><a href="/accounts/login/">Zaloguj się</a>, aby dodać komentarz.</p>
-{% endif %}
-
-<hr>
-
-<div id="comments-container">
-    {% for comment in top_level_comments %}
-        {% include "comments/comment.html" with comment=comment post=post %}
-    {% empty %}
-        <p>Brak komentarzy.</p>
-    {% endfor %}
 </div>
 
 <script>
@@ -112,22 +279,18 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .then(res => res.json())
             .then(data => {
-
                 if (parentId) {
                     const container = document.querySelector(`#comment-${parentId} .ms-4`);
                     container.insertAdjacentHTML("beforeend", data.html);
-
+                    form.classList.add('d-none');
                 } else {
                     const list = document.querySelector("#comments-container");
-
                     const emptyMsg = list.querySelector("p");
                     if (emptyMsg && emptyMsg.textContent.includes("Brak komentarzy")) {
-                        emptyMsg.remove();
+                        emptyMsg.closest('.text-center').remove();
                     }
-
                     list.insertAdjacentHTML("afterbegin", data.html);
                 }
-
                 form.reset();
                 attachReplyForms();
             });
@@ -150,9 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("click", e => {
         const btn = e.target.closest(".like-post-btn");
         if (!btn) return;
-
         const id = btn.dataset.id;
-
         fetch(`/posts/${id}/like/`, {
             method: "POST",
             headers: {
@@ -162,12 +323,8 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(res => res.json())
         .then(data => {
-
             const countSpan = btn.querySelector(".post-like-count");
-            if (countSpan) {
-                countSpan.textContent = data.likes_count; 
-            }
-
+            if (countSpan) countSpan.textContent = data.likes_count; 
             btn.classList.toggle("btn-primary", data.liked);
             btn.classList.toggle("btn-outline-primary", !data.liked);
         });
@@ -176,9 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("click", e => {
         const btn = e.target.closest(".like-comment-btn");
         if (!btn) return;
-
         const id = btn.dataset.id;
-
         fetch(`/comments/${id}/like/`, {
             method: "POST",
             headers: {
@@ -188,18 +343,85 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(res => res.json())
         .then(data => {
-
             const countSpan = btn.querySelector(".comment-like-count");
-            if (countSpan) {
-                countSpan.textContent = data.likes_count; 
-            }
-
+            if (countSpan) countSpan.textContent = data.likes_count; 
             btn.classList.toggle("btn-primary", data.liked);
             btn.classList.toggle("btn-outline-primary", !data.liked);
         });
     });
 
+    document.addEventListener("click", e => {
+        const btn = e.target.closest(".delete-comment-btn");
+        if (!btn) return;
+        e.preventDefault();
+        const id = btn.dataset.id;
+        if (confirm("Czy na pewno chcesz usunąć ten komentarz?")) {
+            fetch(`/comments/delete/${id}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken,
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'deleted') {
+                    document.getElementById(`comment-${id}`).remove();
+                }
+            });
+        }
+    });
+
+    document.addEventListener("click", e => {
+        const btn = e.target.closest(".edit-comment-trigger");
+        if (!btn) return;
+        e.preventDefault();
+        const id = btn.dataset.id;
+        const rawText = btn.dataset.rawText;
+        const wrapper = document.querySelector(`#comment-${id} .comment-content-wrapper`);
+        
+        wrapper.innerHTML = `
+            <div class="mt-2 mb-3">
+                <textarea class="form-control mb-2 edit-comment-input" rows="3" style="border-radius: 10px;">${rawText}</textarea>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-success save-edit-btn" data-id="${id}" style="border-radius: 8px; font-weight: 600;">Zapisz</button>
+                    <button class="btn btn-sm btn-secondary cancel-edit-btn" data-id="${id}" style="border-radius: 8px; font-weight: 600;">Anuluj</button>
+                </div>
+            </div>
+        `;
+    });
+
+    document.addEventListener("click", e => {
+        const btn = e.target.closest(".cancel-edit-btn");
+        if (!btn) return;
+        location.reload(); 
+    });
+
+    document.addEventListener("click", e => {
+        const btn = e.target.closest(".save-edit-btn");
+        if (!btn) return;
+        const id = btn.dataset.id;
+        const newText = document.querySelector(`#comment-${id} .edit-comment-input`).value;
+
+        fetch(`/comments/edit/${id}/`, {
+            method: "POST",
+            headers: { 
+                "X-CSRFToken": csrftoken, 
+                "X-Requested-With": "XMLHttpRequest",
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `text=${encodeURIComponent(newText)}`
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'updated') {
+                const wrapper = document.querySelector(`#comment-${id} .comment-content-wrapper`);
+                wrapper.innerHTML = `<p class="mb-3 text-dark comment-text" style="line-height: 1.5;">${data.text.replace(/\n/g, '<br>')}</p>`;
+                const editBtn = document.querySelector(`.edit-comment-trigger[data-id="${id}"]`);
+                if (editBtn) editBtn.dataset.rawText = data.text;
+            }
+        });
+    });
 });
 </script>
-
 {% endblock %}

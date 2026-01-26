@@ -1,190 +1,230 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    {% if is_edit %}Edytuj blog{% else %}Dodaj blog{% endif %}
+    {% if is_edit %}Edytuj blog{% else %}Dodaj blog{% endif %} - BlogMaster
 {% endblock %}
 
 {% block content %}
 <style>
-body {
-    background-color: #f3f4f6;
-    font-family: 'Segoe UI', sans-serif;
-}
+    body {
+        background-color: #f3f4f6;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+    }
 
-.form-container {
-    max-width: 480px;
-    margin: 60px auto;
-    background: white;
-    padding: 40px 50px;
-    border-radius: 16px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-}
+    .form-container {
+        max-width: 500px;
+        margin: 50px auto;
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
 
-h1 {
-    text-align: center;
-    margin-bottom: 25px;
-    font-size: 26px;
-    font-weight: 600;
-    color: #333;
-}
+    h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 28px;
+        font-weight: 800;
+        color: #212529;
+    }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
-}
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
 
-label {
-    margin-bottom: 6px;
-    font-weight: 500;
-    color: #555;
-}
+    /* Usunięto cursor: pointer, etykieta jest statyczna */
+    label {
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #495057;
+        font-size: 14px;
+        cursor: default; 
+    }
 
-input, textarea, select {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 15px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
+    input[type="text"], 
+    input[type="email"], 
+    textarea, 
+    select {
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        padding: 12px 16px;
+        font-size: 15px;
+        transition: all 0.2s;
+        background-color: #fff;
+    }
 
-input:focus, textarea:focus, select:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-    outline: none;
-}
+    input:focus, textarea:focus, select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+        outline: none;
+    }
 
-input[type="file"] {
-    padding: 8px;
-    font-size: 15px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    background-color: #f9fafb;
-}
+    input[type="file"] {
+        padding: 10px;
+        background: #f8f9fa;
+        border: 1px dashed #ced4da;
+        border-radius: 10px;
+    }
 
-.btn-submit {
-    width: 100%;
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
+    .public-checkbox-wrapper {
+        flex-direction: row !important;
+        align-items: center;
+        gap: 12px;
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+    }
 
-.btn-submit:hover {
-    background-color: #2563eb;
-}
+    .public-checkbox-wrapper input {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
 
-.errorlist {
-    list-style: none;
-    padding: 0;
-    margin-top: 5px;
-    color: #dc2626;
-    font-size: 14px;
-}
+    .public-checkbox-wrapper label {
+        margin-bottom: 0;
+        color: #212529;
+        cursor: default;
+    }
 
-.errorlist li {
-    background: #fee2e2;
-    border: 1px solid #fca5a5;
-    padding: 6px 10px;
-    border-radius: 6px;
-    margin-top: 4px;
-}
+    .btn-submit {
+        width: 100%;
+        background: linear-gradient(45deg, #0d6efd, #004db3);
+        color: white;
+        border: none;
+        padding: 14px;
+        font-size: 16px;
+        font-weight: 700;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+        margin-top: 10px;
+    }
 
-.preview-img {
-    max-width: 100%;
-    border-radius: 8px;
-    margin-top: 10px;
-}
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(13, 110, 253, 0.35);
+        filter: brightness(1.1);
+    }
+
+    .divider {
+        text-align: center;
+        margin: -5px 0 15px 0;
+        font-size: 11px;
+        font-weight: 800;
+        color: #adb5bd;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .preview-img {
+        max-width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-top: 15px;
+        border: 2px solid #fff;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin-top: 8px;
+        color: #dc3545;
+        font-size: 13px;
+    }
 </style>
 
-<div class="form-container">
-  <h1>
-    {% if is_edit %}
-      Edytuj blog
-    {% else %}
-      Dodaj blog
-    {% endif %}
-  </h1>
+<div class="container">
+    <div class="form-container">
+        <h1>
+            {% if is_edit %}
+                <i class="fas fa-edit me-2"></i>Edytuj blog
+            {% else %}
+                <i class="fas fa-plus-circle me-2"></i>Dodaj blog
+            {% endif %}
+        </h1>
 
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
 
-    <!-- Tytuł -->
-    <div class="form-group">
-      {{ form.title.label_tag }}
-      {{ form.title }}
-      {{ form.title.errors }}
+            <div class="form-group">
+                <label>Tytuł:</label>
+                {{ form.title }}
+                {{ form.title.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>Opis:</label>
+                {{ form.description }}
+                {{ form.description.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>Wybierz kategorię:</label>
+                {{ form.existing_category }}
+                {{ form.existing_category.errors }}
+            </div>
+
+            <div class="divider">— lub —</div>
+
+            <div class="form-group">
+                <label>Stwórz nową kategorię:</label>
+                {{ form.new_category }}
+                {{ form.new_category.errors }}
+            </div>
+
+            <div class="form-group public-checkbox-wrapper">
+                {{ form.is_public }}
+                <label>Ustaw jako publiczny (widoczny dla każdego)</label>
+                {{ form.is_public.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>Zdjęcie główne bloga:</label>
+                <input type="file" name="image" id="id_image" accept="image/*">
+                {{ form.image.errors }}
+
+                {% if is_edit and blog.image %}
+                    <img id="image-preview" class="preview-img" src="{{ blog.image.url }}">
+                {% else %}
+                    <img id="image-preview" class="preview-img" src="" style="display:none;">
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-submit">
+                {% if is_edit %}
+                    <i class="fas fa-save me-2"></i>Zapisz zmiany
+                {% else %}
+                    <i class="fas fa-cloud-upload-alt me-2"></i>Opublikuj blog
+                {% endif %}
+            </button>
+          
+        </form>
     </div>
-
-    <!-- Opis -->
-    <div class="form-group">
-      {{ form.description.label_tag }}
-      {{ form.description }}
-      {{ form.description.errors }}
-    </div>
-
-    <!-- Kategoria: dropdown -->
-    <div class="form-group">
-      {{ form.existing_category.label_tag }}
-      {{ form.existing_category }}
-      {{ form.existing_category.errors }}
-    </div>
-
-    <!-- Kategoria: nowa -->
-    <div class="form-group">
-      {{ form.new_category.label_tag }}
-      {{ form.new_category }}
-      {{ form.new_category.errors }}
-    </div>
-
-    <div class="form-group">
-      {{ form.is_public.label_tag }}
-      {{ form.is_public }}
-      {{ form.is_public.errors }}
-   </div>
-
-
-    <!-- Obrazek -->
-    <div class="form-group">
-      <label for="id_image">Zdjęcie bloga:</label>
-      <input type="file" name="image" id="id_image" accept="image/*">
-      {{ form.image.errors }}
-
-      {% if is_edit and blog.image %}
-          <!-- Podgląd aktualnego obrazka -->
-          <img id="image-preview" class="preview-img" src="{{ blog.image.url }}">
-      {% else %}
-          <!-- Pusty podgląd przy dodawaniu -->
-          <img id="image-preview" class="preview-img" src="" style="display:none;">
-      {% endif %}
-    </div>
-
-    <button type="submit" class="btn-submit">
-      {% if is_edit %}
-        Zapisz zmiany
-      {% else %}
-        Dodaj blog
-      {% endif %}
-    </button>
-  </form>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    var input = document.getElementById("id_image");
-    var preview = document.getElementById("image-preview");
+    document.addEventListener("DOMContentLoaded", function () {
+        var input = document.getElementById("id_image");
+        var preview = document.getElementById("image-preview");
 
-    input.addEventListener("change", function () {
-        var file = input.files[0];
-        if (file) {
-            preview.src = URL.createObjectURL(file);
-            preview.style.display = "block";
-        }
+        input.addEventListener("change", function () {
+            var file = input.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = "block";
+                }
+                reader.readAsDataURL(file);
+            }
+        });
     });
-});
 </script>
 {% endblock %}

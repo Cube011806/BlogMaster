@@ -1,93 +1,131 @@
 {% extends 'base.html' %}
+
+{% block title %}Rejestracja - BlogMaster{% endblock %}
+
 {% block content %}
 <style>
-  body {
-    background-color: #f3f4f6;
-    font-family: 'Segoe UI', sans-serif;
-  }
+    /* Style identyczne jak w logowaniu dla spójności */
+    body {
+        background-color: #f3f4f6;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+    }
 
-  .form-container {
-    max-width: 420px;
-    margin: 60px auto;
-    background: white;
-    padding: 40px 50px;
-    border-radius: 16px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  }
+    .form-container {
+        max-width: 450px; /* Nieco szerszy dla dłuższego formularza */
+        margin: 60px auto;
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
 
-  h1 {
-    text-align: center;
-    margin-bottom: 25px;
-    font-size: 26px;
-    font-weight: 600;
-    color: #333;
-  }
+    h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 28px;
+        font-weight: 800;
+        color: #212529;
+    }
 
-  form p {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
-  }
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
 
-  label {
-    margin-bottom: 6px;
-    font-weight: 500;
-    color: #555;
-  }
+    label {
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #495057;
+        font-size: 14px;
+        cursor: default;
+    }
 
-  input {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 15px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
+    input {
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        padding: 12px 16px;
+        font-size: 15px;
+        transition: all 0.2s;
+    }
 
-  input:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-    outline: none;
-  }
+    input:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+        outline: none;
+    }
 
-  .btn-submit {
-    width: 100%;
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
+    /* Pomocniczy tekst Django pod polami (np. wymagania hasła) */
+    .helptext {
+        font-size: 11px;
+        color: #adb5bd;
+        margin-top: 5px;
+        line-height: 1.4;
+    }
 
-  .btn-submit:hover {
-    background-color: #2563eb;
-  }
+    .btn-submit {
+        width: 100%;
+        background: linear-gradient(45deg, #0d6efd, #004db3);
+        color: white;
+        border: none;
+        padding: 14px;
+        font-size: 16px;
+        font-weight: 700;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+        margin-top: 10px;
+    }
 
-  ul.errorlist {
-    list-style: none;
-    padding: 0;
-    margin-top: 5px;
-    color: #dc2626;
-    font-size: 14px;
-  }
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(13, 110, 253, 0.35);
+        filter: brightness(1.1);
+    }
 
-  .errorlist li {
-    background: #fee2e2;
-    border: 1px solid #fca5a5;
-    padding: 6px 10px;
-    border-radius: 6px;
-    margin-top: 4px;
-  }
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 25px;
+        font-size: 14px;
+        color: #6c757d;
+    }
 </style>
 
-<div class="form-container">
-  <h1>Rejestracja</h1>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn-submit">Zarejestruj się</button>
-  </form>
+<div class="container">
+    <div class="form-container">
+        <h1>Zarejestruj się</h1>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div class="form-group">
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <div class="helptext">{{ field.help_text|safe }}</div>
+                    {% endif %}
+                    {% if field.errors %}
+                        <div class="errorlist">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn-submit">Zarejestruj się</button>
+        </form>
+
+        <div class="auth-footer">
+            Masz już konto? <a href="{% url 'login' %}" class="text-primary text-decoration-none fw-bold">Zaloguj się</a>
+        </div>
+    </div>
 </div>
 {% endblock %}

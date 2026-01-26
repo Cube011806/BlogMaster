@@ -4,62 +4,134 @@
 
 {% block content %}
 <style>
-body {
-    background-color: #f3f4f6;
-    font-family: 'Segoe UI', sans-serif;
-}
+    body {
+        background-color: #f3f4f6;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .btn-custom-add {
+        background: linear-gradient(45deg, #0d6efd, #004db3);
+        border: none;
+        border-radius: 8px;
+        padding: 10px 25px;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
+        color: white;
+        text-decoration: none;
+        transition: all 0.2s;
+        display: inline-block;
+    }
+
+    .btn-custom-add:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(13, 110, 253, 0.4);
+        color: white;
+    }
+
+    .blog-thumb-fixed {
+        width: 90px;
+        height: 90px;
+        object-fit: cover;
+        object-position: center;
+        border-radius: 8px;
+        background-color: #e9ecef;
+    }
+
+    .blog-card-custom {
+        transition: background-color 0.2s, transform 0.1s;
+        border: none !important;
+        margin-bottom: 12px;
+        border-radius: 12px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        background-color: #fff;
+    }
+
+    .blog-card-custom:hover {
+        transform: scale(1.005);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .badge-cat {
+        font-size: 0.75rem;
+        opacity: 0.85;
+    }
 </style>
 
 <div class="container mt-4">
-    <h1 class="mb-4">Twoje blogi:</h1>
+    <h1 class="mb-4 fw-bold text-dark">Twoje blogi</h1>
 
-    <a class="btn btn-primary mb-3" href="{% url 'blog_create' %}">Dodaj blog</a>
+    <div class="mb-4">
+        <a class="btn-custom-add" href="{% url 'blog_create' %}">
+            Dodaj blog
+        </a>
+    </div>
 
     {% if blogs %}
         <div class="list-group">
             {% for blog in blogs %}
-                <div class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                <div class="list-group-item d-flex justify-content-between align-items-center flex-wrap blog-card-custom p-3">
 
                     <div class="d-flex align-items-center">
-
                         {% if blog.image %}
-                            <img src="{{ blog.image.url }}" style="width:80px; height:auto;" class="me-3 rounded">
+                            <img src="{{ blog.image.url }}" class="blog-thumb-fixed me-3 shadow-sm">
+                        {% else %}
+                            <div class="blog-thumb-fixed me-3 d-flex align-items-center justify-content-center text-muted border">
+                                <i class="fas fa-image fa-2x"></i>
+                            </div>
                         {% endif %}
 
                         <div>
                             <a href="{% url 'blog_detail' blog.id %}" class="text-decoration-none text-dark">
-                                <h5 class="mb-1">
+                                <h5 class="mb-1 fw-bold">
                                     {{ blog.title }}
-
                                     {% if blog.is_public %}
-                                        <span class="badge bg-success">🌍 Publiczny</span>
+                                        <span class="badge bg-success ms-2" style="font-size: 0.7rem;">🌍 Publiczny</span>
                                     {% else %}
-                                        <span class="badge bg-dark">🔒 Prywatny</span>
+                                        <span class="badge bg-dark ms-2" style="font-size: 0.7rem;">🔒 Prywatny</span>
                                     {% endif %}
                                 </h5>
 
                                 {% if blog.category %}
-                                    <span class="badge bg-secondary">{{ blog.category.name }}</span>
+                                    <div class="mb-2">
+                                        <span class="badge bg-secondary badge-cat">{{ blog.category.name }}</span>
+                                    </div>
                                 {% endif %}
 
-                                <small class="d-block mt-1">
-                                    Utworzono: {{ blog.created_at }}
+                                <small class="text-muted">
+                                    <i class="fas fa-user-circle me-1"></i> {{ blog.owner.email }} 
+                                    <span class="mx-2 text-muted opacity-50">|</span> 
+                                    <i class="far fa-calendar-alt me-1"></i> {{ blog.created_at|date:"d M Y" }}
                                 </small>
                             </a>
                         </div>
-
                     </div>
 
-                    <div class="mt-2 mt-md-0">
-                        <a href="{% url 'blog_edit' blog.pk %}" class="btn btn-sm btn-warning me-2">Edytuj</a>
-                        <a href="{% url 'blog_delete' blog.pk %}" class="btn btn-sm btn-danger">Usuń</a>
+                    <div class="dropdown">
+                        <button class="btn btn-link text-muted p-2 border-0 shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-lg"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius: 10px;">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'blog_edit' blog.pk %}">
+                                    <i class="fas fa-edit me-2 text-warning"></i> Edytuj
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="{% url 'blog_delete' blog.pk %}">
+                                    <i class="fas fa-trash-alt me-2"></i> Usuń
+                                </a>
+                            </li>
+                        </ul>
                     </div>
 
                 </div>
             {% endfor %}
         </div>
     {% else %}
-        <p>Nie masz jeszcze żadnych blogów.</p>
+        <div class="text-center mt-5 p-5 bg-white rounded-4 shadow-sm border-0">
+            <i class="fas fa-folder-open fa-3x text-muted opacity-25 mb-3"></i>
+            <p class="text-muted mb-0 fs-5">Nie masz jeszcze żadnych blogów. Może warto coś stworzyć?</p>
+        </div>
     {% endif %}
 </div>
 {% endblock %}

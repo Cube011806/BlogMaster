@@ -3,54 +3,110 @@
 
 {% block content %}
 <style>
-body {
-    background-color: #f3f4f6;
-    font-family: 'Segoe UI', sans-serif;
-}
-.card {
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-}
-.card-title {
-    font-size: 18px;
-    font-weight: 600;
-}
+    body {
+        background-color: #f3f4f6;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+    }
+    /* Baner powitalny - KOLORYSTYKA SZARA/GRAFITOWA */
+    .hero-section {
+        background-color: #212529; /* Ciemny grafit pasujący do navbara */
+        color: white;
+        padding: 60px 0;
+        border-radius: 0 0 30px 30px;
+        margin-top: -24px; 
+        margin-bottom: 40px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        position: relative;
+    }
+    /* Subtelny wzór, żeby nie było smutno */
+    .hero-section::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+        background-size: 32px 32px;
+        pointer-events: none;
+    }
+    /* Karty wpisów */
+    .post-card {
+        border: none;
+        border-radius: 16px;
+        transition: all 0.3s ease;
+        background: white;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    }
+    .post-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    }
+    .card-category {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        color: #6c757d; /* Szary zamiast niebieskiego */
+    }
+    .btn-read {
+        border-radius: 10px;
+        padding: 8px 20px;
+        font-weight: 600;
+        transition: all 0.2s;
+        background-color: #212529; /* Ciemny przycisk */
+        border: none;
+        color: white;
+    }
+    .btn-read:hover {
+        background-color: #343a40;
+        color: white;
+    }
 </style>
 
-<div class="container mt-4">
+<div class="hero-section text-center shadow-sm">
+    <div class="container position-relative" style="z-index: 1;">
+        <h1 class="display-4 fw-bold mb-3">Witaj w BlogMaster!</h1>
+        <p class="lead opacity-75 mb-4">Twórz, zarządzaj i obserwuj swoje blogi w jednym miejscu.</p>
+    </div>
+</div>
 
-    <h1 class="text-center mb-3">Witaj w BlogMaster!</h1>
-    <p class="text-center mb-5">Twórz, zarządzaj i obserwuj swoje blogi.</p>
-
-    <h3 class="mb-4">Najnowsze wpisy:</h3>
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-dark m-0">Najnowsze wpisy</h3>
+    </div>
 
     {% if posts %}
         <div class="row">
             {% for post in posts %}
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ post.title }}</h5>
+                    <div class="card h-100 post-card">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="card-category mb-2">
+                                <i class="fas fa-bookmark me-1"></i> {{ post.blog.title }}
+                            </div>
+                            
+                            <h5 class="card-title fw-bold mb-3 text-dark">{{ post.title }}</h5>
 
-                            <p class="text-muted" style="font-size: 14px;">
-                                {{ post.created_at|date:"d.m.Y H:i" }}<br>
-                                Blog: {{ post.blog.title }}
+                            <p class="text-muted mb-4" style="font-size: 14px;">
+                                <i class="far fa-clock me-1"></i> {{ post.created_at|date:"d M Y, H:i" }}
                             </p>
 
-                            <a href="{% url 'post_detail' post.id %}" class="btn btn-primary btn-sm">
-                                Czytaj więcej
-                            </a>
+                            <div class="mt-auto">
+                                <a href="{% url 'post_detail' post.id %}" class="btn btn-read w-100">
+                                    Czytaj więcej <i class="fas fa-arrow-right ms-2"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             {% endfor %}
         </div>
-
     {% else %}
-        <div class="alert alert-info">
-            Brak wpisów do wyświetlenia.
+        <div class="text-center py-5">
+            <div class="opacity-25 mb-3">
+                <i class="fas fa-pen-nib fa-3x"></i>
+            </div>
+            <p class="text-muted fs-5">Brak wpisów do wyświetlenia. Bądź pierwszy!</p>
         </div>
     {% endif %}
-
 </div>
 {% endblock %}

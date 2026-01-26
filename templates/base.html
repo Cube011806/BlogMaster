@@ -1,58 +1,80 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pl">
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}BlogMaster{% endblock %}</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
-<script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BlogMaster{% endblock %}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        /* Ujednolicenie paska nawigacji */
+        .navbar {
+            font-family: 'Segoe UI', sans-serif !important;
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+    </style>
 
-    </head>
-    <body>
-        <!-- Pasek nawigacyjny -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="/">BlogMaster</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">BlogMaster</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item"><a class="nav-link" href="/blogs/">Wszystkie blogi</a></li>
-                        {% if user.is_authenticated %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'user_blogs' %}">Zarządzaj twoimi blogami</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/stats/">Twoje statystyki</a></li>
-                        {% endif %}
-                    </ul>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="/blogs/">Wszystkie blogi</a></li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'user_blogs' %}">Zarządzaj twoimi blogami</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/stats/">Twoje statystyki</a></li>
+                    {% endif %}
+                </ul>
 
-                    <!-- Sekcja logowania/rejestracji -->
-                    <ul class="navbar-nav ms-auto">
-                        {% if user.is_authenticated %}
-                            <li class="nav-item">
-                                <span class="navbar-text text-light me-2">Witaj {{ user.email }}</span>
-                            </li>
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <span class="navbar-text text-light me-2">Witaj {{ user.email }}</span>
+                        </li>
+                        <li class="nav-item">
                             <form method="post" action="{% url 'logout' %}" style="display:inline;">
                                 {% csrf_token %}
-                                <button type="submit" class="nav-link btn btn-link text-decoration-none p-0 m-0" style="color: #fff;">
+                                <button type="submit" class="nav-link btn btn-link text-decoration-none p-0 m-0" style="color: #fff; border: none; background: none;">
                                     Wyloguj
                                 </button>
                             </form>
-                        {% else %}
-                            <li class="nav-item"><a class="nav-link" href="/accounts/login/">Zaloguj</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/accounts/register/">Zarejestruj się</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
+                        </li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="/accounts/login/">Zaloguj</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/accounts/register/">Zarejestruj się</a></li>
+                    {% endif %}
+                </ul>
             </div>
-        </nav>
-
-        <!-- Główna treść -->
-        <div class="container mt-5">
-            {% block content %}
-            {% endblock %}
         </div>
+    </nav>
 
-    </body>
+    <div class="container mt-5">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+    <script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
 </html>

@@ -1,80 +1,182 @@
 {% extends 'base.html' %}
 
-{% block title %}Szczegóły bloga{% endblock %}
+{% block title %}{{ blog.title }} - BlogMaster{% endblock %}
 
 {% block content %}
 <style>
-body {
-    background-color: #f3f4f6;
-    font-family: 'Segoe UI', sans-serif;
-}
+    body {
+        background-color: #f3f4f6;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .blog-header-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: none;
+        margin-bottom: 30px;
+    }
+
+    .blog-detail-img {
+        width: 110px;
+        height: 110px;
+        object-fit: cover;
+        object-position: center;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .badge-cat {
+        font-size: 0.85rem; 
+        opacity: 0.9;
+        padding: 6px 12px;
+        border-radius: 6px;
+    }
+
+    .status-badge-large {
+        font-size: 0.9rem !important;
+        padding: 6px 12px !important;
+        border-radius: 8px !important;
+        font-weight: 700 !important;
+    }
+
+    .btn-custom-add {
+        background: linear-gradient(45deg, #0d6efd, #004db3);
+        border: none;
+        border-radius: 8px;
+        padding: 10px 25px;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
+        color: white;
+        text-decoration: none;
+        transition: all 0.2s;
+        display: inline-block;
+    }
+
+    .btn-custom-add:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(13, 110, 253, 0.4);
+        color: white;
+    }
+
+    .post-item {
+        transition: background-color 0.2s, transform 0.1s;
+        border: none !important;
+        border-radius: 12px !important;
+        margin-bottom: 12px;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        position: relative;
+    }
+
+    .post-item:hover {
+        transform: scale(1.005);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        z-index: 5;
+    }
+
+    .post-item:focus-within {
+        z-index: 10;
+    }
+
+    .dropdown-menu {
+        z-index: 1050;
+    }
 </style>
 
-<div class="container mt-4">
+<div class="container mt-5">
 
-    <!-- Header bloga -->
-    <div class="list-group-item d-flex align-items-center mb-3">
-
-        {% if blog.image %}
-            <img src="{{ blog.image.url }}" style="width:80px; height:auto;" class="me-3 rounded" alt="Miniatura bloga">
-        {% endif %}
-
-        <div>
-            <h1 class="mb-1">
-                Blog: {{ blog.title }}
-
-                {% if request.user == blog.owner %}
-                    {% if blog.is_public %}
-                        <span class="badge bg-success" style="font-size: 1.35rem; padding: 3px 6px;">🌍 Publiczny</span>
-                    {% else %}
-                        <span class="badge bg-dark" style="font-size: 1.35rem; padding: 3px 6px;">🔒 Prywatny</span>
-                    {% endif %}
-                {% endif %}
-            </h1>
-
-            {% if blog.category %}
-                <span class="badge bg-secondary">{{ blog.category.name }}</span>
+    <div class="blog-header-card shadow-sm">
+        <div class="d-flex align-items-center flex-wrap">
+            {% if blog.image %}
+                <img src="{{ blog.image.url }}" class="blog-detail-img me-4 mb-3 mb-md-0" alt="Miniatura bloga">
+            {% else %}
+                <div class="blog-detail-img me-4 mb-3 mb-md-0 bg-light d-flex align-items-center justify-content-center text-muted border">
+                    <i class="fas fa-image fa-2x"></i>
+                </div>
             {% endif %}
 
-            <small class="d-block mt-1 text-muted">
-                Właściciel: {{ blog.owner.email }} — {{ blog.created_at }}
-            </small>
+            <div class="flex-grow-1">
+                <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
+                    <h1 class="fw-bold text-dark m-0">{{ blog.title }}</h1>
+                    
+                    {% if blog.is_public %}
+                        <span class="badge bg-success status-badge-large">🌍 Publiczny</span>
+                    {% else %}
+                        <span class="badge bg-dark status-badge-large">🔒 Prywatny</span>
+                    {% endif %}
+                </div>
+
+                {% if blog.category %}
+                    <span class="badge bg-secondary badge-cat mb-2">{{ blog.category.name }}</span>
+                {% endif %}
+
+                <p class="text-muted mb-0">
+                    <i class="fas fa-user-circle me-1"></i> {{ blog.owner.email }}
+                    <span class="mx-2">|</span>
+                    <i class="far fa-calendar-alt me-1"></i> {{ blog.created_at|date:"d M Y" }}
+                </p>
+            </div>
         </div>
+
+        {% if blog.description %}
+            <hr class="my-4 opacity-25">
+            <div class="px-1">
+                <h6 class="fw-bold text-uppercase text-muted mb-2" style="font-size: 0.75rem; letter-spacing: 1px;">O blogu</h6>
+                <p class="text-dark mb-0 fs-5" style="line-height: 1.6;">{{ blog.description }}</p>
+            </div>
+        {% endif %}
     </div>
 
-    <hr>
-
-    <p>{{ blog.description }}</p>
-
-    <hr>
-
+    <h3 class="fw-bold text-dark mb-3 px-1">Posty na blogu</h3>
+    
     {% if request.user == blog.owner %}
-        <a href="{% url 'post_create' blog.pk %}" class="btn btn-primary mb-3">Dodaj post</a>
+        <div class="mb-4 px-1">
+            <a class="btn-custom-add" href="{% url 'post_create' blog.pk %}">
+                Dodaj post
+            </a>
+        </div>
     {% endif %}
 
-    <h3>Posty:</h3>
-
-    <div class="list-group">
+   <div class="list-group px-1">
         {% for post in posts %}
-            <div class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-
-                <div>
-                    <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none text-dark">
-                        <h5 class="mb-1">{{ post.title }}</h5>
-                        <small>Autor: {{ post.author }} — {{ post.created_at }}</small>
+            <div class="list-group-item post-item d-flex justify-content-between align-items-center p-4">
+                <div class="flex-grow-1">
+                    <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none text-dark d-block">
+                        <h4 class="fw-bold mb-1">{{ post.title }}</h4>
+                        <div class="text-muted small">
+                            <i class="fas fa-user-circle me-1"></i> {{ post.author }}
+                            <span class="mx-2">|</span>
+                            <i class="far fa-clock me-1"></i> {{ post.created_at|date:"d M Y, H:i" }}
+                        </div>
                     </a>
                 </div>
 
                 {% if request.user == blog.owner %}
-                <div class="mt-2 mt-md-0">
-                    <a href="{% url 'post_edit' post.pk %}" class="btn btn-sm btn-warning me-2">Edytuj</a>
-                    <a href="{% url 'post_delete' post.pk %}" class="btn btn-sm btn-danger">Usuń</a>
+                <div class="dropdown ms-3">
+                    <button class="btn btn-link text-muted p-2 border-0 shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v fa-lg"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'post_edit' post.pk %}">
+                                <i class="fas fa-edit me-2 text-warning"></i> Edytuj post
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="{% url 'post_delete' post.pk %}">
+                                <i class="fas fa-trash-alt me-2"></i> Usuń post
+                            </a>
+                        </li>
+                    </ul>
                 </div>
                 {% endif %}
-
             </div>
         {% empty %}
-            <p>Brak postów w tym blogu.</p>
+            <div class="text-center py-5 bg-white rounded-4 shadow-sm border-0">
+                <p class="text-muted mb-0 fs-5">Ten blog nie ma jeszcze żadnych postów!</p>
+            </div>
         {% endfor %}
     </div>
 

@@ -1,19 +1,12 @@
 from django.shortcuts import render
 from posts.models import Post
-import random
 
 def home(request):
     # Pobieramy najnowsze posty z publicznych blogów
+    # Sortujemy od najnowszego (-created_at) i bierzemy tylko 6 pierwszych
     posts = Post.objects.filter(
         blog__is_public=True
-    ).order_by('-created_at')[:20]  # np. 20 najnowszych
-
-    # Losujemy kolejność
-    posts = list(posts)
-    random.shuffle(posts)
-
-    # Ograniczamy do np. 6 wyświetlanych
-    posts = posts[:6]
+    ).order_by('-created_at')[:6]
 
     return render(request, 'main/index.html', {
         'posts': posts
