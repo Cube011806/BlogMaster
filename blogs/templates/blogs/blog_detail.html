@@ -134,6 +134,7 @@
     {% if request.user == blog.owner %}
         <div class="mb-4 px-1">
             <a class="btn-custom-add" href="{% url 'post_create' blog.pk %}">
+                <i class="fas fa-plus me-2"></i>
                 Dodaj post
             </a>
         </div>

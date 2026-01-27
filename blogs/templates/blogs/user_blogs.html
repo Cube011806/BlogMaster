@@ -44,16 +44,27 @@
         border-radius: 12px !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         background-color: #fff;
+        position: relative; /* Potrzebne do obsługi z-index */
     }
 
     .blog-card-custom:hover {
         transform: scale(1.005);
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        z-index: 5; /* Lekko podbijamy przy hover */
+    }
+
+    /* Fix na dropdown: karta z aktywnym menu ląduje na samej górze stosu */
+    .blog-card-custom:focus-within {
+        z-index: 1050;
     }
 
     .badge-cat {
         font-size: 0.75rem;
         opacity: 0.85;
+    }
+
+    .dropdown-menu {
+        z-index: 1100; /* Upewniamy się, że menu jest nad wszystkim */
     }
 </style>
 
@@ -62,7 +73,7 @@
 
     <div class="mb-4">
         <a class="btn-custom-add" href="{% url 'blog_create' %}">
-            Dodaj blog
+            <i class="fas fa-plus me-2"></i> Dodaj blog
         </a>
     </div>
 
